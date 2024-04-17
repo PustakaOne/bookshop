@@ -22,7 +22,7 @@ public class ReviewControllerTest {
     void testCreateReview() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(reviewController).build();
 
-        mockMvc.perform(get("/review/1/add"))
+        mockMvc.perform(post("/review/1/add"))
                 .andExpect(status().isOk()).andExpect(content().string("Create Review for Book 1"));
     }
 
@@ -38,7 +38,7 @@ public class ReviewControllerTest {
     void testUpdateReview() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(reviewController).build();
 
-        mockMvc.perform(get("/review/1/1/update"))
+        mockMvc.perform(put("/review/1/1/update"))
                 .andExpect(status().isOk()).andExpect(content().string("Update reviewId 1 in bookId 1"));
     }
 
@@ -46,7 +46,7 @@ public class ReviewControllerTest {
     void testDeleteReview() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(reviewController).build();
 
-        mockMvc.perform(get("/review/1/1/delete"))
+        mockMvc.perform(delete("/review/1/1/delete"))
                 .andExpect(status().isOk()).andExpect(content().string("Delete review Id 1 in BookId 1"));
     }
 
@@ -54,7 +54,7 @@ public class ReviewControllerTest {
     void testDeleteAllReview() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(reviewController).build();
 
-        mockMvc.perform(get("/review/1/delete"))
+        mockMvc.perform(delete("/review/1/delete"))
                 .andExpect(status().isOk()).andExpect(content().string("Delete all review for book id 1"));
     }
 }
