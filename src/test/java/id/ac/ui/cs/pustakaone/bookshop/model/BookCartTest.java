@@ -24,6 +24,6 @@ public class BookCartTest {
         Book book = new Book("bookId");
         Cart cart = new Cart("cartId");
         BookCart bookCart = new BookCart("Id", book, cart, 1);
-        assertEquals("Id", bookCart.getBookCartDetail());
+        assertEquals("bookId", bookCart.getBookCartDetail());
     }
 }
