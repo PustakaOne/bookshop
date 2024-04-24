@@ -11,30 +11,37 @@ public class Cart {
     private String id;
     @Setter
     private int totalPrice;
-    private String paymentStatus;
+    private PaymentState paymentState;
     @Getter
     private List<BookCart> bookCarts;
 
     public Cart(String id) {
         this.id = id;
         this.bookCarts = new ArrayList<>();
-        this.paymentStatus = "not paid";
+        this.paymentState = new NotPaidState(); // default state
     }
 
     public int getTotalHarga() {
         return totalPrice;
     }
 
-    public void setPaymentStatus(String status) {
-        this.paymentStatus = status;
+    public String getPaymentStatus() {
+        return paymentState.getStatus();
     }
 
-    public String getPaymentStatus() {
-        return paymentStatus;
+    public void processPayment() {
+        this.paymentState.processPayment(this);
+    }
+
+    public void completePayment() {
+        this.paymentState.completePayment(this);
     }
 
     public void addBookCart(BookCart bookCart) {
         this.bookCarts.add(bookCart);
     }
 
+    public void setState(PaymentState state) {
+        this.paymentState = state;
+    }
 }
