@@ -20,10 +20,39 @@ public class BookConcreteBuilderTest {
     }
 
     @Test
+    public void testReset() {
+        // Build a book
+        builder.buildBookId("12345");
+        builder.buildTitle("Sample Book");
+        builder.buildAuthor("John Doe");
+
+        // Reset the builder
+        builder.reset();
+
+        // Get the book after reset
+        Book book = builder.getBook();
+
+        // Assert that all attributes are reset to their default values
+        assertNull(book.getId());
+        assertNull(book.getTitle());
+        assertNull(book.getAuthor());
+        assertNull(book.getPublisher());
+        assertNull(book.getDescription());
+        assertEquals(0, book.getPrice());
+        assertEquals(0, book.getStock());
+        assertNull(book.getReleaseDate());
+        assertNull(book.getIsbn());
+        assertNull(book.getCoverUrl());
+        assertNull(book.getCategory());
+        assertEquals(0, book.getPages());
+        assertNull(book.getLang());
+    }
+
+    @Test
     public void testBuildBookId() {
         builder.buildBookId("12345");
         Book book = builder.getBook();
-        assertEquals("12345", book.getBookId());
+        assertEquals("12345", book.getId());
     }
 
     @Test
