@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController()
 public class CartController {
-    @GetMapping("/")
-    public String getHello() {
-        return "Hello bookshop!";
-    }
+//    @GetMapping("/")
+//    public String getHello() {
+//        return "Hello bookshop!";
+//    }
     @PostMapping("/shop/cart/add")
     public String addBookToCart() {
         return "Successfully added book to cart";
