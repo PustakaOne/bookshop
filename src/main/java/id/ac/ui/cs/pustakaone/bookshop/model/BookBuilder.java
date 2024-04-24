@@ -17,4 +17,5 @@ public interface BookBuilder {
     public void buildCategory(String category);
     public void buildPages(int pages);
     public void buildLang(String lang);
+    public Book getBook();
 }
