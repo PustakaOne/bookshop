@@ -14,7 +14,6 @@ public class Book {
     private String publisher;
     private String description;
     private int stock;
-    private int pages;
     private Date releaseDate;
     private String isbn;
     private String coverUrl;
