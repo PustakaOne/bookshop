@@ -17,5 +17,5 @@ public interface BookBuilder {
     public void setCoverUrl(String coverUrl);
     public void setCategory(String category);
     public void setPages(int pages);
-    String void setLang(String lang);
+    public void setLang(String lang);
 }
