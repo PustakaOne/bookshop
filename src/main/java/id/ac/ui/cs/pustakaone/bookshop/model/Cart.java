@@ -1,24 +1,37 @@
 package id.ac.ui.cs.pustakaone.bookshop.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+
+@Entity
+@Table(name = "Cart")
+@NoArgsConstructor
+@Setter
+@Getter
 public class Cart {
-
-    private String id;
-    @Setter
-    private int totalPrice;
-    private boolean isPaymentSuccess;
-    @Getter
-    private List<BookCart> bookCarts;
-
     public Cart(String id) {
         this.id = id;
-        this.bookCarts = new ArrayList<>();
     }
+
+    @Id
+    @Column(name="id", nullable = false)
+    private String id;
+
+    @Column(name="totalPrice", nullable = false)
+    private int totalPrice;
+
+    @Column(name = "isPaymentSuccess", nullable=false)
+    private boolean isPaymentSuccess;
+
+
+    @OneToMany(mappedBy = "cart")
+    private Set<BookCart> bookCarts;
 
     public int getTotalHarga() {
         return totalPrice;
@@ -35,5 +48,4 @@ public class Cart {
     public void addBookCart(BookCart bookCart) {
         this.bookCarts.add(bookCart);
     }
-
 }
