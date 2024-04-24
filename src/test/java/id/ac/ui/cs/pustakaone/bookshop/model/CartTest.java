@@ -15,8 +15,9 @@ public class CartTest {
     @Test
     public void testSetPaymentStatus() {
         Cart cart = new Cart("cartId");
-        cart.setPaymentStatus(true);
-        assertTrue(cart.getPaymentStatus());
+        assertEquals("not paid", cart.getPaymentStatus());
+        cart.setPaymentStatus("paid");
+        assertEquals("paid", cart.getPaymentStatus());
     }
 
     @Test
