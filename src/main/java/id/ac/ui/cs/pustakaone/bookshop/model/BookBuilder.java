@@ -4,17 +4,17 @@ import java.util.Date;
 
 public interface BookBuilder {
     public void reset();
-    public void setBookId(String id);
-    public void setTitle(String title);
-    public void setAuthor(String author);
-    public void setPublisher(String publisher);
-    public void setDescription(String description);
-    public void setPrice(int price);
-    public void setStock(int stock);
-    public void setReleaseDate(Date releaseDate);
-    public void setIsbn(String isbn);
-    public void setCoverUrl(String coverUrl);
-    public void setCategory(String category);
-    public void setPages(int pages);
-    public void setLang(String lang);
+    public void buildBookId(String id);
+    public void buildTitle(String title);
+    public void buildAuthor(String author);
+    public void buildPublisher(String publisher);
+    public void buildDescription(String description);
+    public void buildPrice(int price);
+    public void buildStock(int stock);
+    public void buildReleaseDate(Date releaseDate);
+    public void buildIsbn(String isbn);
+    public void buildCoverUrl(String coverUrl);
+    public void buildCategory(String category);
+    public void buildPages(int pages);
+    public void buildLang(String lang);
 }
