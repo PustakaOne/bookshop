@@ -57,4 +57,18 @@ public class CartControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Payment successful"));
     }
+
+    @Test
+    public void testGetCart() throws Exception {
+        mockMvc.perform(get("/shop/cart"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Success get cart"));
+    }
+
+    @Test
+    public void testDeleteBookFromCart() throws Exception {
+        mockMvc.perform(delete("/shop/cart/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Success delete book from cart"));
+    }
 }
