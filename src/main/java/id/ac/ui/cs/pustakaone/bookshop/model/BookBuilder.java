@@ -1,7 +1,6 @@
 package id.ac.ui.cs.pustakaone.bookshop.model;
 
 import java.util.Date;
-import java.util.List;
 
 public interface BookBuilder {
     public void reset();
