@@ -13,6 +13,7 @@ public class Book {
     private String author;
     private String publisher;
     private String description;
+    private int price;
     private int stock;
     private Date releaseDate;
     private String isbn;
