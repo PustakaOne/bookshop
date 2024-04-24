@@ -11,25 +11,26 @@ public class Cart {
     private String id;
     @Setter
     private int totalPrice;
-    private boolean isPaymentSuccess;
+    private String paymentStatus;
     @Getter
     private List<BookCart> bookCarts;
 
     public Cart(String id) {
         this.id = id;
         this.bookCarts = new ArrayList<>();
+        this.paymentStatus = "not paid";
     }
 
     public int getTotalHarga() {
         return totalPrice;
     }
 
-    public void setPaymentStatus(boolean status) {
-        this.isPaymentSuccess = status;
+    public void setPaymentStatus(String status) {
+        this.paymentStatus = status;
     }
 
-    public boolean getPaymentStatus() {
-        return isPaymentSuccess;
+    public String getPaymentStatus() {
+        return paymentStatus;
     }
 
     public void addBookCart(BookCart bookCart) {
