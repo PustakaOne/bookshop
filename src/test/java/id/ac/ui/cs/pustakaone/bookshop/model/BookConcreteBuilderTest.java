@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Date;
 
 @ExtendWith(MockitoExtension.class)
-public class BookBuilderTest {
+public class BookConcreteBuilderTest {
     @InjectMocks
     private BookConcreteBuilder builder;
 
