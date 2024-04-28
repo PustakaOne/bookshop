@@ -12,6 +12,9 @@ import lombok.Setter;
 @Entity
 public class BookCart {
     public BookCart(Book book, Cart cart, int amount) {
+        this.book = book;
+        this.cart = cart;
+        this.amount = amount;
     }
 
     @Id
@@ -27,9 +30,19 @@ public class BookCart {
     @Column(name = "amount")
     private int amount;
 
-    public void incrementAmount() {}
+    public void incrementAmount() {
+        if (this.amount == this.book.getStock()) {
+            throw new IllegalStateException("Jumlah barang melebihi stock yang tersedia!");
+        }
+        this.amount++;
+    }
 
-    public void decrementAmount() {}
+    public void decrementAmount() {
+        if (this.amount == 1) {
+            throw new IllegalStateException("Jumlah barang tidak boleh 0");
+        }
+        this.amount--;
+    }
 //    private Book book;
 //    private Cart cart;
 //
