@@ -5,43 +5,42 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@Entity
-@NoArgsConstructor
 @Table(name = "BookCart")
+@Entity
 public class BookCart {
-    public BookCart(String id, Book book, Cart cart) {
-        this.id = id;
+    public BookCart(Book book, Cart cart, int amount) {
         this.book = book;
         this.cart = cart;
-        this.amount = 1;
+        this.amount = amount;
     }
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
-    @Column(name = "bookId")
-    private String bookId;
+    @ManyToOne
+    private Book book;
+
+    @ManyToOne
+    private Cart cart;
 
     @Column(name = "amount")
     private int amount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cartId")
-    private Cart cart;
-
     public void incrementAmount() {
+        if (this.amount == this.book.getStock()) {
+            throw new IllegalStateException("Jumlah barang melebihi stock yang tersedia!");
+        }
         this.amount++;
     }
 
     public void decrementAmount() {
+        if (this.amount == 1) {
+            throw new IllegalStateException("Jumlah barang tidak boleh 0");
+        }
         this.amount--;
     }
-
-    public String getBookCartDetail() {
-        return this.getId();
-    }
-
 }

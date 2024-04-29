@@ -1,51 +1,54 @@
 package id.ac.ui.cs.pustakaone.bookshop.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.awt.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-
-@Entity
-@Table(name = "Cart")
 @NoArgsConstructor
-@Setter
 @Getter
+@Setter
+@Table(name = "Cart")
+@Entity
 public class Cart {
-    public Cart(String id) {
-        this.id = id;
+    public Cart(String userId) {
+        this.userId = userId;
+        this.totalPrice = 0;
+        this.paymentSuccess = false;
+        this.bookCarts = new ArrayList<>();
+        this.address = "";
     }
 
     @Id
-    @Column(name="id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
-    @Column(name="totalPrice", nullable = false)
+    @Column(name = "userId")
+    private String userId;
+
+    @Column(name = "totalPrice")
     private int totalPrice;
 
-    @Column(name = "isPaymentSuccess", nullable=false)
-    private boolean isPaymentSuccess;
-
+    @Column(name = "paymentSuccess")
+    private boolean paymentSuccess;
 
     @OneToMany(mappedBy = "cart")
-    private Set<BookCart> bookCarts;
+    private List<BookCart> bookCarts;
 
-    public int getTotalHarga() {
-        return totalPrice;
-    }
+    @Column(name = "address")
+    private String address;
 
-    public void setPaymentStatus(boolean status) {
-        this.isPaymentSuccess = status;
-    }
+    @Column(name = "paidAt")
+    private Date paidAt;
 
-    public boolean getPaymentStatus() {
-        return isPaymentSuccess;
-    }
-
-    public void addBookCart(BookCart bookCart) {
-        this.bookCarts.add(bookCart);
+    public void setTotalPrice(int totalPrice) {
+        if (totalPrice < 0) {
+            throw new IllegalArgumentException("Total price tidak boleh negatif");
+        }
+        this.totalPrice = totalPrice;
     }
 }

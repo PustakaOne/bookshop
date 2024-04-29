@@ -24,24 +24,19 @@ public class CartControllerTest {
     }
 
     @Test
-    public void testGetHello() throws Exception {
-        mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Hello bookshop!"));
-    }
-
-    @Test
     public void testAddBookToCart() throws Exception {
-        mockMvc.perform(post("/shop/cart/add"))
+        int bookId = 1;
+        mockMvc.perform(post("/shop/cart/add/" + bookId))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Successfully added book to cart"));
+                .andExpect(content().string("Successfully added Book " + bookId + " to cart"));
     }
 
     @Test
     public void testUpdateBookQuantity() throws Exception {
-        mockMvc.perform(post("/shop/cart/update"))
+        int bookId = 1;
+        mockMvc.perform(post("/shop/cart/update/" + bookId))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Successfully updated book quantity in cart"));
+                .andExpect(content().string("Successfully updated quantity for Book " + bookId + " in cart"));
     }
 
     @Test
