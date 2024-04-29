@@ -16,6 +16,11 @@ import java.util.List;
 @Entity
 public class Cart {
     public Cart(String userId) {
+        this.userId = userId;
+        this.totalPrice = 0;
+        this.paymentSuccess = false;
+        this.bookCarts = new ArrayList<>();
+        this.address = "";
     }
 
     @Id
@@ -39,4 +44,11 @@ public class Cart {
 
     @Column(name = "paidAt")
     private Date paidAt;
+
+    public void setTotalPrice(int totalPrice) {
+        if (totalPrice < 0) {
+            throw new IllegalArgumentException("Total price tidak boleh negatif");
+        }
+        this.totalPrice = totalPrice;
+    }
 }

@@ -24,8 +24,7 @@ public class CartTest {
     @Test
     public void testInitialValue() {
         Cart cart = new Cart(userId);
-        assertNotNull(cart.getId());
-        assertEquals(userId, cart.getId());
+        assertEquals(userId, cart.getUserId());
         assertEquals(0, cart.getTotalPrice());
         assertFalse(cart.isPaymentSuccess());
         assertEquals("", cart.getAddress());
