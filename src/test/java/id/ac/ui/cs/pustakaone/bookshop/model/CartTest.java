@@ -1,29 +1,71 @@
 package id.ac.ui.cs.pustakaone.bookshop.model;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class CartTest {
+import java.util.Date;
 
-//    @Test
-//    public void testGetTotalPrice() {
-//        Cart cart = new Cart("cartId");
-//        cart.setTotalPrice(500);
-//        assertEquals(500, cart.getTotalHarga());
-//    }
-//
-//    @Test
-//    public void testSetPaymentStatus() {
-//        Cart cart = new Cart("cartId");
-//        cart.setPaymentStatus(true);
-//        assertTrue(cart.getPaymentStatus());
-//    }
-//
-//    @Test
-//    public void testGetBookCarts() {
-//        Cart cart = new Cart("cartId");
-//        BookCart bookCart = new BookCart("bookCartId", new Book("bookId"), cart, 1);
-//        cart.addBookCart(bookCart);
-//        assertEquals(1, cart.getBookCarts().size());
-//    }
+public class CartTest {
+    String userId;
+    @BeforeEach
+    void setup() {
+        this.userId = "dos9-dwke-we9d-vjdi-oid9";
+    }
+
+
+    @Test
+    public void testCreateCart() {
+        Cart cart = new Cart(userId);
+        assertNotNull(cart);
+    }
+
+    @Test
+    public void testInitialValue() {
+        Cart cart = new Cart(userId);
+        assertNotNull(cart.getId());
+        assertEquals(userId, cart.getId());
+        assertEquals(0, cart.getTotalPrice());
+        assertFalse(cart.isPaymentSuccess());
+        assertEquals("", cart.getAddress());
+    }
+
+    @Test
+    public void testSetTotalPrice() {
+        Cart cart = new Cart(userId);
+        cart.setTotalPrice(500);
+        assertEquals(500, cart.getTotalPrice());
+    }
+
+    @Test
+    public void testSetNegativeTotalPrice() {
+        Cart cart = new Cart(userId);
+        assertThrows(IllegalArgumentException.class, () -> {
+            cart.setTotalPrice(-1);
+        });
+    }
+
+    @Test
+    public void testSetPaymentStatus() {
+        Cart cart = new Cart(userId);
+        cart.setPaymentSuccess(true);
+        assertTrue(cart.isPaymentSuccess());
+    }
+
+    @Test
+    public void testSetAddresss() {
+        Cart cart = new Cart(userId);
+        String address = "Jalan Depok";
+        cart.setAddress(address);
+        assertEquals(address, cart.getAddress());
+    }
+
+    @Test
+    public void testSetPaidAt() {
+        Cart cart = new Cart(userId);
+        Date paidAt = new Date();
+        cart.setPaidAt(paidAt);
+        assertEquals(paidAt, cart.getPaidAt());
+    }
 }
