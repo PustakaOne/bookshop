@@ -14,7 +14,7 @@ import java.util.Date;
 @Table(name = "Book")
 public class Book {
     @Id
-    @Column(name = "bookId", nullable = false, updatable = false)
+    @Column(name = "book_id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
