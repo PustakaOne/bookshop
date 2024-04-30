@@ -1,12 +1,18 @@
 package id.ac.ui.cs.pustakaone.bookshop.model;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Table(name = "Book")
+@Entity
 public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
-    public Book(String id) {
-        this.id = id;
-    }
-    public String getId(){
-        return id;
-    }
+    @Column(name = "stock")
+    private int stock;
 }
