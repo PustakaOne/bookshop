@@ -19,11 +19,11 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Column(name = "bookId")
-    private Book book;
+    private String bookId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Column(name = "userId")
-    private User user;
+    private String userId;
 
     @Column(name = "content")
     private String review;
