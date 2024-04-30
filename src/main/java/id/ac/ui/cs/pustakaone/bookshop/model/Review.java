@@ -19,12 +19,12 @@ public class Review {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "bookId")
-    private String bookId;
+    @JoinColumn(name = "book_id")
+    private Book book;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "userId")
-    private String userId;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "content")
     private String content;
