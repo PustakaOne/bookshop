@@ -26,7 +26,7 @@ public class Review {
     private String userId;
 
     @Column(name = "content")
-    private String review;
+    private String content;
 
     @Column(name = "rating")
     private int rating;
