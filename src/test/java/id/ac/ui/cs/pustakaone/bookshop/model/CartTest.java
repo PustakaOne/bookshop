@@ -22,7 +22,7 @@ public class CartTest {
     @Test
     public void testGetBookCarts() {
         Cart cart = new Cart("cartId");
-        BookCart bookCart = new BookCart("bookCartId", new Book("bookId"), cart, 1);
+        BookCart bookCart = new BookCart("bookCartId", new Book(), cart, 1);
         cart.addBookCart(bookCart);
         assertEquals(1, cart.getBookCarts().size());
     }
