@@ -34,6 +34,27 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Book deleteBookFromCart(Long userId, Long bookCartId) {
-        return null;
+        Optional<BookCart> bookCart = bookCartRepository.findById(bookCartId);
+
+        if (bookCart.isEmpty()) {
+            throw new EntityNotFoundException("Bookcart not found! 1");
+        }
+
+        Cart cart = cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId);
+        if (cart == null) {
+            throw new EntityNotFoundException("Bookcart not found! 2");
+        }
+
+        List<BookCart> bookCarts = cart.getBookCarts();
+
+        if (!bookCarts.contains(bookCart.get())) {
+            throw new EntityNotFoundException("Bookcart not found! 3");
+        }
+
+        bookCarts.remove(bookCart);
+
+        bookCartRepository.delete(bookCart.get());
+
+        return bookCart.get().getBook();
     }
 }

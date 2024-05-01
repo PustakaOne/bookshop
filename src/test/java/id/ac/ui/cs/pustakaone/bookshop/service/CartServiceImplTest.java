@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -56,7 +58,10 @@ public class CartServiceImplTest {
 
         Book book = new Book();
         Cart cart = new Cart(userId);
+        List<BookCart> bookCarts = new ArrayList<>();
         BookCart bookCart = new BookCart(book, cart, 1);
+        bookCarts.add(bookCart);
+        cart.setBookCarts(bookCarts);
 
         doReturn(Optional.of(bookCart)).when(bookCartRepository).findById(bookCart.getId());
         when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(cart);
