@@ -19,12 +19,14 @@ public class BookCart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "book_id",referencedColumnName = "id")
     private Book book;
 
     @ManyToOne
+    @JoinColumn(name = "cart_id",referencedColumnName = "id")
     private Cart cart;
 
     @Column(name = "amount")
@@ -43,28 +45,5 @@ public class BookCart {
         }
         this.amount--;
     }
-//    private Book book;
-//    private Cart cart;
-//
-//    @Getter
-//    private int amount;
-//
-//    public BookCart(String id, Book book, Cart cart, int amount) {
-//        this.id = id;
-//        this.book = book;
-//        this.cart = cart;
-//        this.amount = amount;
-//    }
-//
-//    public void incrementAmount() {
-//        this.amount++;
-//    }
-//
-//    public void decrementAmount() {
-//        this.amount--;
-//    }
-//
-//    public String getBookCartDetail() {
-//        return this.book.getId();
-//    }
+
 }

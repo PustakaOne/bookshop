@@ -1,58 +1,60 @@
-//package id.ac.ui.cs.pustakaone.bookshop.repository;
-//
-//import id.ac.ui.cs.pustakaone.bookshop.model.Book;
-//import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
-//import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-//import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-//
-//import java.util.Optional;
-//
-//import static org.assertj.core.api.Assertions.assertThat;
-//
-//@DataJpaTest
-//public class BookCartRepositoryTests {
-//
-//    @Autowired
-//    private TestEntityManager entityManager;
-//
-//    @Autowired
-//    private BookCartRepository bookCartRepository;
-//
-//    @Test
-//    public void testFindByBookIdAndCartId() {
-//        // given
-//        Cart cart = new Cart("cart1");
-//        Book book = new Book("book1");
-//        BookCart bookCart = new BookCart("bookCart1", book, cart, 1);
-//        entityManager.persist(cart);
-//        entityManager.persist(book);
-//        entityManager.persist(bookCart);
-//        entityManager.flush();
-//
-//        // when
-//        Optional<BookCart> found = bookCartRepository.findByBookIdAndCartId(book.getId(), cart.getId());
-//
-//        // then
-//        assertThat(found).isPresent();
-//        assertThat(found.get().getId()).isEqualTo(bookCart.getId());
-//    }
-//
-//    @Test
-//    public void testSaveBookCart() {
-//        // given
-//        Cart cart = new Cart("cart2");
-//        Book book = new Book("book2");
-//        BookCart bookCart = new BookCart("bookCart2", book, cart, 1);
-//        entityManager.persist(cart);
-//        entityManager.persist(book);
-//
-//        // when
-//        BookCart savedBookCart = bookCartRepository.save(bookCart);
-//
-//        // then
-//        assertThat(entityManager.find(BookCart.class, savedBookCart.getId())).isEqualTo(savedBookCart);
-//    }
-//}
+package id.ac.ui.cs.pustakaone.bookshop.repository;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import id.ac.ui.cs.pustakaone.bookshop.model.Book;
+import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
+import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+@DataJpaTest
+public class BookCartRepositoryTest {
+
+    @Autowired
+    private BookCartRepository bookCartRepository;
+
+    @Autowired
+    private CartRepository cartRepository;
+
+    private Book book;
+    private Cart cart;
+    private BookCart bookCart;
+
+    @BeforeEach
+    public void setUp() {
+        book = new Book();
+        book.setStock(10);
+        cart = new Cart("user123");
+        bookCart = new BookCart(book, cart, 2);
+    }
+
+    @Test
+    public void testSaveAndRetrieveBookCart() {
+        cartRepository.save(cart);
+        bookCartRepository.save(bookCart);
+
+        BookCart savedBookCart = bookCartRepository.findById(bookCart.getId()).orElse(null);
+
+        assertNotNull(savedBookCart);
+        assertEquals(bookCart.getAmount(), savedBookCart.getAmount());
+        assertNotNull(savedBookCart.getCart());
+    }
+
+    @Test
+    public void testUpdateBookCartAmount() {
+        cartRepository.save(cart);
+        bookCartRepository.save(bookCart);
+
+        bookCart.setAmount(3);
+        bookCartRepository.save(bookCart);
+
+        BookCart updatedBookCart = bookCartRepository.findById(bookCart.getId()).orElse(null);
+
+        assertNotNull(updatedBookCart);
+        assertEquals(3, updatedBookCart.getAmount());
+    }
+}
