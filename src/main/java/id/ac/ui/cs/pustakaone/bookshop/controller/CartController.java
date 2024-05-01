@@ -34,6 +34,12 @@ public class CartController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<Cart> getCart(@PathVariable String userId) {
-        return null;
+        try {
+            Cart cart = cartService.getCartByUserId(Long.parseLong(userId));
+            return ResponseEntity.ok(cart);
+        } catch (Exception err) {
+            System.out.println(err);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
