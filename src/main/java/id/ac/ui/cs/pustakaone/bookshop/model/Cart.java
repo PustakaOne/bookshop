@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "Cart")
 @Entity
 public class Cart {
-    public Cart(String userId) {
+    public Cart(Long userId) {
         this.userId = userId;
         this.totalPrice = 0;
         this.paymentSuccess = false;
@@ -28,8 +28,11 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "lastId")
+    private Long lastId; //last idcart yang sudah di paid, remember id itu increment
+
     @Column(name = "userId")
-    private String userId;
+    private Long userId;
 
     @Column(name = "totalPrice")
     private int totalPrice;

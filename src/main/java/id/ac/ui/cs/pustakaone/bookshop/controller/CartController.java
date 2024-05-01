@@ -22,6 +22,6 @@ public class CartController {
 
     @PostMapping("/pay")
     public String payCart() {
-        return "Payment successful";
+        return "Payment process";
     }
 }

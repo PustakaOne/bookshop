@@ -28,7 +28,7 @@ public class BookCartRepositoryTest {
     public void setUp() {
         book = new Book();
         book.setStock(10);
-        cart = new Cart("user123");
+        cart = new Cart(1L);
         bookCart = new BookCart(book, cart, 2);
     }
 

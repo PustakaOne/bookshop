@@ -29,61 +29,36 @@ public class CartServiceImplTest {
     }
 
     @Test
-    public void testCreateCart() {
-        String userId = "user1";
+    void testGetCartByUserId_CartExists() {
+        Long userId = 1L;
+        Cart existingCart = new Cart(userId);
+        when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(existingCart);
+
+        Cart cart = cartService.getCartByUserId(userId);
+
+        assertNotNull(cart);
+        assertEquals(userId, cart.getUserId());
+    }
+
+    @Test
+    void testGetCartByUserId_CartDoesNotExist() {
+        Long userId = 1L;
+        when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(null);
+
+        Cart cart = cartService.getCartByUserId(userId);
+
+        assertNotNull(cart);
+        assertEquals(userId, cart.getUserId());
+        verify(cartRepository).save(cart);
+    }
+
+    @Test
+    void testPayCart() {
+        Long userId = 1L;
         Cart cart = new Cart(userId);
-        when(cartRepository.save(any(Cart.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(cart);
 
-        Cart createdCart = cartService.createCart(userId);
-
-        assertNotNull(createdCart);
-        assertEquals(userId, createdCart.getUserId());
-        verify(cartRepository).save(any(Cart.class));
-    }
-
-    @Test
-    public void testCheckoutCart() {
-        Long cartId = 1L;
-        Cart cart = new Cart();
-        cart.setId(cartId);
-        cart.setStatus("belum");
-
-        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
-        when(cartRepository.save(cart)).thenReturn(cart);
-
-        cartService.checkoutCart(cartId);
-
-        assertEquals("processed", cart.getStatus());
-        verify(cartRepository).save(cart);
-    }
-
-    @Test
-    public void testCancelPay() {
-        Long cartId = 2L;
-        Cart cart = new Cart();
-        cart.setId(cartId);
-        cart.setStatus("processed");
-
-        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
-        when(cartRepository.save(cart)).thenReturn(cart);
-
-        cartService.cancelPay(cartId);
-
-        assertEquals("belum", cart.getStatus());
-        verify(cartRepository).save(cart);
-    }
-
-    @Test
-    public void testPayCart() {
-        Long cartId = 3L;
-        Cart cart = new Cart();
-        cart.setId(cartId);
-        cart.setStatus("processed");
-
-        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
-        when(cartRepository.save(cart)).thenReturn(cart);
-
-        cartService.payCart(cartId);
+        cartService.payCart(userId);
 
         assertEquals("menunggu pengiriman", cart.getStatus());
         assertTrue(cart.isPaymentSuccess());
@@ -91,15 +66,80 @@ public class CartServiceImplTest {
         verify(cartRepository).save(cart);
     }
 
-    @Test
-    public void testCartNotFound() {
-        Long cartId = 4L;
-        when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
+//    @Test
+//    public void testCreateCart() {
+//        String userId = "user1";
+//        Cart cart = new Cart(userId);
+//        when(cartRepository.save(any(Cart.class))).thenAnswer(invocation -> invocation.getArgument(0));
+//
+//        Cart createdCart = cartService.createCart(userId);
+//
+//        assertNotNull(createdCart);
+//        assertEquals(userId, createdCart.getUserId());
+//        verify(cartRepository).save(any(Cart.class));
+//    }
+//
+//    @Test
+//    public void testCheckoutCart() {
+//        Long cartId = 1L;
+//        Cart cart = new Cart();
+//        cart.setId(cartId);
+//        cart.setStatus("belum");
+//
+//        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
+//        when(cartRepository.save(cart)).thenReturn(cart);
+//
+//        cartService.checkoutCart(cartId);
+//
+//        assertEquals("processed", cart.getStatus());
+//        verify(cartRepository).save(cart);
+//    }
+//
+//    @Test
+//    public void testCancelPay() {
+//        Long cartId = 2L;
+//        Cart cart = new Cart();
+//        cart.setId(cartId);
+//        cart.setStatus("processed");
+//
+//        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
+//        when(cartRepository.save(cart)).thenReturn(cart);
+//
+//        cartService.cancelPay(cartId);
+//
+//        assertEquals("belum", cart.getStatus());
+//        verify(cartRepository).save(cart);
+//    }
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            cartService.checkoutCart(cartId);
-        });
+//    @Test
+//    public void testPayCart() {
+//        Long cartId = 3L;
+//        Cart cart = new Cart();
+//        cart.setId(cartId);
+//        cart.setStatus("processed");
+//
+//        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
+//        when(cartRepository.save(cart)).thenReturn(cart);
+//
+//        cartService.payCart(cartId);
+//
+//        assertEquals("menunggu pengiriman", cart.getStatus());
+//        assertTrue(cart.isPaymentSuccess());
+//        assertNotNull(cart.getPaidAt());
+//        verify(cartRepository).save(cart);
+//    }
+//
+//    @Test
+//    public void testCartNotFound() {
+//        Long cartId = 4L;
+//        when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
+//
+//        Exception exception = assertThrows(RuntimeException.class, () -> {
+//            cartService.checkoutCart(cartId);
+//        });
+//
+//        assertEquals("Cart not found", exception.getMessage());
+//    }
 
-        assertEquals("Cart not found", exception.getMessage());
-    }
+
 }

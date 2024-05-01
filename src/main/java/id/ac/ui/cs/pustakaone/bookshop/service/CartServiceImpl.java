@@ -12,35 +12,40 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private CartRepository cartRepository;
-
     @Override
-    public Cart createCart(String userId) {
-        Cart cart = new Cart(userId);
-        cartRepository.save(cart);
+    public Cart getCartByUserId(Long userId) {
+        Cart cart = cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId);
+        if (cart == null) {
+            cart = new Cart(userId);
+            cartRepository.save(cart);
+        }
         return cart;
     }
 
+
     @Override
-    public void checkoutCart(Long cartId) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Cart not found"));
+    public void checkoutCart(Long userId) {
+
+        Cart cart = this.getCartByUserId(userId);
         cart.setStatus("processed");
         cartRepository.save(cart);
     }
 
     @Override
-    public void cancelPay(Long cartId) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Cart not found"));
+    public void cancelPay(Long userId) {
+        Cart cart = this.getCartByUserId(userId);
         cart.setStatus("belum");
         cartRepository.save(cart);
     }
 
     @Override
-    public void payCart(Long cartId) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Cart not found"));
+    public void payCart(Long userId) {
+        Cart cart = this.getCartByUserId(userId);
         cart.setStatus("menunggu pengiriman");
         cart.setPaymentSuccess(true);
         cart.setPaidAt(new Date());
-//        cart.setLastId(cart.getLastId() + 1);
         cartRepository.save(cart);
     }
+
+
 }

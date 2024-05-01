@@ -21,10 +21,13 @@ public class BookCartServiceImpl implements BookCartService {
     @Autowired
     private BookRepository bookRepository;
 
-    @Override
-    public BookCart addBookToCart(Long cartId, Long bookId, int amount) {
+    @Autowired
+    private CartServiceImpl cartService;
 
-        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Cart not found"));
+    @Override
+    public BookCart addBookToCart(Long userId, Long bookId, int amount) {
+
+        Cart cart = cartService.getCartByUserId(userId);
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found"));
         if (amount > book.getStock()) {
             throw new IllegalArgumentException("Amount exceeds stock available");
@@ -39,13 +42,22 @@ public class BookCartServiceImpl implements BookCartService {
     }
 
     @Override
-    public BookCart updateBookAmountInCart(Long bookCartId, int newAmount) {
+    public BookCart updateBookAmountInCart(Long userId,Long bookCartId, int newAmount) {
+        Cart cart = cartService.getCartByUserId(userId);
+//        cart.getBookCarts()
         BookCart bookCart = bookCartRepository.findById(bookCartId).orElseThrow(() -> new RuntimeException("BookCart not found"));
+        cart.getBookCarts().remove(bookCart);
         if (newAmount < 1 || newAmount > bookCart.getBook().getStock()) {
+//            newAmount = bookCart.getAmount();
+            cart.getBookCarts().add(bookCart);
+            cartRepository.save(cart);
             throw new IllegalArgumentException("Invalid amount");
         }
         bookCart.setAmount(newAmount);
+        cart.getBookCarts().add(bookCart);
+
         bookCartRepository.save(bookCart);
+        cartRepository.save(cart);
         return bookCart;
     }
 

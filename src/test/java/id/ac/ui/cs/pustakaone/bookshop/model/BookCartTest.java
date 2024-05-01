@@ -10,7 +10,7 @@ public class BookCartTest {
     Cart cart;
     @BeforeEach
     void setup() {
-        String userId = "d8sd-d9sd-og0w-ds89-cvxk";
+        Long userId = 1L;
         this.book = new Book();
         this.cart = new Cart(userId);
     }
