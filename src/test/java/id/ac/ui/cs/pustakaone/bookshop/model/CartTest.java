@@ -1,68 +1,70 @@
 package id.ac.ui.cs.pustakaone.bookshop.model;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
+
 public class CartTest {
-
-    private Cart cart;
-
+    String userId;
     @BeforeEach
-    public void setUp() {
-        cart = new Cart("cartId");
+    void setup() {
+        this.userId = "dos9-dwke-we9d-vjdi-oid9";
+    }
+
+
+    @Test
+    public void testCreateCart() {
+        Cart cart = new Cart(userId);
+        assertNotNull(cart);
     }
 
     @Test
-    public void testGetTotalPrice() {
+    public void testInitialValue() {
+        Cart cart = new Cart(userId);
+        assertEquals(userId, cart.getUserId());
+        assertEquals(0, cart.getTotalPrice());
+        assertFalse(cart.isPaymentSuccess());
+        assertEquals("", cart.getAddress());
+    }
+
+    @Test
+    public void testSetTotalPrice() {
+        Cart cart = new Cart(userId);
         cart.setTotalPrice(500);
-        assertEquals(500, cart.getTotalHarga(), "Total price should be 500");
+        assertEquals(500, cart.getTotalPrice());
     }
 
     @Test
-    public void testInitialState() {
-        assertEquals("not paid", cart.getPaymentStatus(), "Initial state should be 'not paid'");
+    public void testSetNegativeTotalPrice() {
+        Cart cart = new Cart(userId);
+        assertThrows(IllegalArgumentException.class, () -> {
+            cart.setTotalPrice(-1);
+        });
     }
 
     @Test
-    public void testProcessPayment() {
-        cart.processPayment();
-        assertEquals("processed", cart.getPaymentStatus(), "After processing, status should be 'processed'");
+    public void testSetPaymentStatus() {
+        Cart cart = new Cart(userId);
+        cart.setPaymentSuccess(true);
+        assertTrue(cart.isPaymentSuccess());
     }
 
     @Test
-    public void testCompletePaymentWithoutProcessing() {
-        cart.completePayment();
-        assertEquals("not paid", cart.getPaymentStatus(), "Trying to complete payment without processing should fail and remain 'not paid'");
+    public void testSetAddresss() {
+        Cart cart = new Cart(userId);
+        String address = "Jalan Depok";
+        cart.setAddress(address);
+        assertEquals(address, cart.getAddress());
     }
 
     @Test
-    public void testCompletePaymentAfterProcessing() {
-        cart.processPayment();
-        cart.completePayment();
-        assertEquals("paid", cart.getPaymentStatus(), "After processing and completing, status should be 'paid'");
-    }
-
-    @Test
-    public void testAddBookCart() {
-        BookCart bookCart = new BookCart("bookCartId", new Book("bookId"), cart, 1);
-        cart.addBookCart(bookCart);
-        assertEquals(1, cart.getBookCarts().size(), "Cart should have one book cart");
-        assertTrue(cart.getBookCarts().contains(bookCart), "Cart should contain the added book cart");
-    }
-
-    @Test
-    public void testProcessPaymentOnProcessedState() {
-        cart.processPayment();
-        cart.processPayment();
-        assertEquals("processed", cart.getPaymentStatus(), "Attempting to process payment again should keep status 'processed'");
-    }
-
-    @Test
-    public void testCompletePaymentOnPaidState() {
-        cart.processPayment();
-        cart.completePayment();
-        cart.completePayment();
-        assertEquals("paid", cart.getPaymentStatus(), "Attempting to complete payment again should keep status 'paid'");
+    public void testSetPaidAt() {
+        Cart cart = new Cart(userId);
+        Date paidAt = new Date();
+        cart.setPaidAt(paidAt);
+        assertEquals(paidAt, cart.getPaidAt());
     }
 }
