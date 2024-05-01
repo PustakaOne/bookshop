@@ -26,8 +26,8 @@ public class BookCart {
         this.amount--;
     }
 
-    public String getBookCartDetail() {
-        return this.book.getId();
+    public long getBookCartDetail() {
+        return this.book.getBookId();
     }
 
 }
