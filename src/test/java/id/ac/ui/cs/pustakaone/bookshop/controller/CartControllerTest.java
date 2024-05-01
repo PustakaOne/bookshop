@@ -57,7 +57,7 @@ public class CartControllerTest {
     public void testGetCart() throws Exception {
         mockMvc.perform(get("/shop/cart"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Success get cart"));
+                .andExpect(jsonPath("$.paymentSuccess").value(false));
     }
 
     @Test
