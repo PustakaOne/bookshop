@@ -19,6 +19,7 @@ public class Cart {
         this.userId = userId;
         this.totalPrice = 0;
         this.paymentSuccess = false;
+        this.status = "belum";
         this.bookCarts = new ArrayList<>();
         this.address = "";
     }
@@ -35,6 +36,9 @@ public class Cart {
 
     @Column(name = "paymentSuccess")
     private boolean paymentSuccess;
+
+    @Column(name = "status")
+    private String status;
 
     @OneToMany(mappedBy = "cart")
     private List<BookCart> bookCarts;

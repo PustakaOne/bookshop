@@ -27,6 +27,7 @@ public class CartTest {
         assertEquals(userId, cart.getUserId());
         assertEquals(0, cart.getTotalPrice());
         assertFalse(cart.isPaymentSuccess());
+        assertEquals("belum",cart.getStatus());
         assertEquals("", cart.getAddress());
     }
 
