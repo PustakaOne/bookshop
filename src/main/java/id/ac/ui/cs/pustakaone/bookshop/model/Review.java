@@ -15,8 +15,8 @@ import java.util.Date;
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
+    @Column(name = "review_id", updatable = false, nullable = false)
+    private Long review_id;
 
     @Column(name = "book_id")
     private Long book_id;
@@ -30,9 +30,9 @@ public class Review {
     @Column(name = "rating")
     private int rating;
 
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     private Date createdAt;
 
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     private Date updatedAt;
 }
