@@ -16,13 +16,13 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id", updatable = false, nullable = false)
-    private Long review_id;
+    private Long reviewId;
 
     @Column(name = "book_id")
-    private Long book_id;
+    private Long bookId;
 
     @Column(name = "user_id")
-    private Long user_id;
+    private Long userId;
 
     @Column(name = "content")
     private String content;
