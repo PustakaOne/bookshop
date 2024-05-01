@@ -74,4 +74,22 @@ public class BookRepositoryTest {
         savedBooks = bookRepository.findAll();
         assertEquals(0, savedBooks.size());
     }
+
+    @Test
+    void testUpdateBook() {
+        bookRepository.save(book);
+        Book updatedBook = Book.builder()
+                .bookId(book.getBookId())
+                .title("Book Title 2")
+                .author("Test")
+                .price(125000)
+                .build();
+        bookRepository.save(updatedBook);
+        Book savedBook = bookRepository.getReferenceById(book.getBookId());
+        assertNotNull(savedBook);
+        assertEquals(updatedBook.getBookId(), savedBook.getBookId());
+        assertEquals(updatedBook.getTitle(), savedBook.getTitle());
+        assertEquals(updatedBook.getAuthor(), savedBook.getAuthor());
+        assertEquals(updatedBook.getPrice(), savedBook.getPrice());
+    }
 }
