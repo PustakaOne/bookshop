@@ -33,5 +33,7 @@ public class CartController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Cart> getCart(@PathVariable String userId) {}
+    public ResponseEntity<Cart> getCart(@PathVariable String userId) {
+        return null;
+    }
 }
