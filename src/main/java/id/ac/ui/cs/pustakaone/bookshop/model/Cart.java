@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "Cart")
 @Entity
 public class Cart {
-    public Cart(String userId) {
+    public Cart(Long userId) {
         this.userId = userId;
         this.totalPrice = 0;
         this.paymentSuccess = false;
@@ -29,7 +29,7 @@ public class Cart {
     private Long id;
 
     @Column(name = "userId")
-    private String userId;
+    private Long userId;
 
     @Column(name = "totalPrice")
     private int totalPrice;

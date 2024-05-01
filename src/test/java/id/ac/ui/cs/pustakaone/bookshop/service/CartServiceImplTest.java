@@ -1,12 +1,17 @@
 package id.ac.ui.cs.pustakaone.bookshop.service;
 
+import id.ac.ui.cs.pustakaone.bookshop.model.Book;
+import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
+import id.ac.ui.cs.pustakaone.bookshop.repository.BookCartRepository;
 import id.ac.ui.cs.pustakaone.bookshop.repository.CartRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,9 +25,12 @@ public class CartServiceImplTest {
     @Mock
     CartRepository cartRepository;
 
+    @Mock
+    BookCartRepository bookCartRepository;
+
     @Test
     public void testGetExistCartByUserId() {
-        String userId = "d9wa-ewq0-daswa-ds92-vjd9";
+        Long userId = 1L;
         Cart existCart = new Cart(userId);
 
         when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(existCart);
@@ -33,7 +41,7 @@ public class CartServiceImplTest {
 
     @Test
     public void testGetNotExistCartByUserId() {
-        String userId = "d9wa-ewq0-daswa-ds92-vjd9";
+        Long userId = 1L;
 
         when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(null);
 
@@ -41,4 +49,19 @@ public class CartServiceImplTest {
 
         assertNotNull(cart);
     }
+
+//    @Test
+//    public void testDeleteBookFromCart() {
+//        Long userId = 1L;
+//        Long bookCartId = 1L;
+//
+//        Book book = new Book();
+//        Cart cart = new Cart(userId);
+//        BookCart bookCart = new BookCart(book, );
+//        when(bookCartRepository.findById(userId)).thenReturn();
+//
+//        Book deletedBook = cartService.deleteBookFromCart(userId, bookCartId);
+//
+//        assertNotNull(deletedBook);
+//    }
 }

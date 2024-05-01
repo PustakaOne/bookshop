@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import java.util.Date;
 
 public class CartTest {
-    String userId;
+    Long userId;
     @BeforeEach
     void setup() {
-        this.userId = "dos9-dwke-we9d-vjdi-oid9";
+        this.userId = 1L;
     }
 
 

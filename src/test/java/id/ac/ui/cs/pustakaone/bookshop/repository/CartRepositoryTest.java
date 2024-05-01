@@ -33,7 +33,7 @@ public class CartRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        cart = new Cart("user123");
+        cart = new Cart(1L);
         cart.setAddress("123 Elm St");
         cart.setStatus("belum");
 
