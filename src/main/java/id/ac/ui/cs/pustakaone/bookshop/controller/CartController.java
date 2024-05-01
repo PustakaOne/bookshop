@@ -1,36 +1,27 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController()
+@RestController
+@RequestMapping("/shop/cart")
 public class CartController {
-//    @GetMapping("/")
-//    public String getHello() {
-//        return "Hello bookshop!";
-//    }
-    @PostMapping("/shop/cart/add")
-    public String addBookToCart() {
-        return "Successfully added book to cart";
+    @PostMapping("/add/{bookId}")
+    public String addBookToCart(@PathVariable("bookId") int bookId) {
+        return "Successfully added Book " + bookId + " to cart";
     }
 
-    @PostMapping("/shop/cart/update")
-    public String updateBookQuantity() {
-        return "Successfully updated book quantity in cart";
+    @PostMapping("/update/{bookId}")
+    public String updateBookQuantity(@PathVariable("bookId") int bookId) {
+        return "Successfully updated quantity for Book " + bookId + " in cart";
     }
 
-    @PostMapping("/shop/cart/checkout")
+    @PostMapping("/checkout")
     public String checkoutCart() {
         return "Checkout successful";
     }
 
-    @PostMapping("/shop/cart/pay")
+    @PostMapping("/pay")
     public String payCart() {
         return "Payment successful";
     }
-
-
-
 }

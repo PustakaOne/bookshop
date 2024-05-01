@@ -16,7 +16,7 @@ public class BookCartTest {
     }
 
     @Test
-    public void testCreateNewBookCart() {
+    public void createNewBookCart() {
         BookCart bookCart = new BookCart(book, cart, 1);
         assertNotNull(bookCart);
         assertEquals(1, bookCart.getAmount());
