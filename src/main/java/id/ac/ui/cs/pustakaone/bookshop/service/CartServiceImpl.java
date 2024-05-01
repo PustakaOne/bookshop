@@ -32,4 +32,8 @@ public class CartServiceImpl implements CartService {
         return cart;
     }
 
+    @Override
+    public Book deleteBookFromCart(Long userId, Long bookCartId) {
+        return null;
+    }
 }

@@ -50,18 +50,19 @@ public class CartServiceImplTest {
         assertNotNull(cart);
     }
 
-//    @Test
-//    public void testDeleteBookFromCart() {
-//        Long userId = 1L;
-//        Long bookCartId = 1L;
-//
-//        Book book = new Book();
-//        Cart cart = new Cart(userId);
-//        BookCart bookCart = new BookCart(book, );
-//        when(bookCartRepository.findById(userId)).thenReturn();
-//
-//        Book deletedBook = cartService.deleteBookFromCart(userId, bookCartId);
-//
-//        assertNotNull(deletedBook);
-//    }
+    @Test
+    public void testDeleteBookFromCart() {
+        Long userId = 1L;
+
+        Book book = new Book();
+        Cart cart = new Cart(userId);
+        BookCart bookCart = new BookCart(book, cart, 1);
+
+        doReturn(Optional.of(bookCart)).when(bookCartRepository).findById(bookCart.getId());
+        when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(cart);
+
+        Book deletedBook = cartService.deleteBookFromCart(userId, bookCart.getId());
+
+        assertEquals(bookCart.getBook(), deletedBook);
+    }
 }
