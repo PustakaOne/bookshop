@@ -19,13 +19,14 @@ public class Cart {
         this.userId = userId;
         this.totalPrice = 0;
         this.paymentSuccess = false;
+        this.status = "belum";
         this.bookCarts = new ArrayList<>();
         this.address = "";
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @Column(name = "userId")
     private String userId;
@@ -35,6 +36,9 @@ public class Cart {
 
     @Column(name = "paymentSuccess")
     private boolean paymentSuccess;
+
+    @Column(name = "status")
+    private String status;
 
     @OneToMany(mappedBy = "cart")
     private List<BookCart> bookCarts;
@@ -50,5 +54,12 @@ public class Cart {
             throw new IllegalArgumentException("Total price tidak boleh negatif");
         }
         this.totalPrice = totalPrice;
+    }
+    public void addBookCart(BookCart bookcart) {
+        this.bookCarts.add(bookcart);
+    }
+
+    public void removeBookCart(BookCart bookCart) {
+        this.bookCarts.remove(bookCart);
     }
 }
