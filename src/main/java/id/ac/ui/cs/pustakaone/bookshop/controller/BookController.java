@@ -14,18 +14,27 @@ public class BookController {
     private BookService bookService;
 
     @RequestMapping(value = "/books", method = RequestMethod.GET)
-    public ResponseEntity<List<Book>> getAllBooks() {
-        ResponseEntity<List<Book>> responseEntity = null;
-        List<Book> books = bookService.getAllBooks();
-        responseEntity = ResponseEntity.ok(books);
+    public ResponseEntity getAllBooks() {
+        ResponseEntity responseEntity = null;
+        try {
+            List<Book> books = bookService.getAllBooks();
+            responseEntity = ResponseEntity.ok(books);
+        } catch (Exception e) {
+            responseEntity = ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
+        }
         return responseEntity;
     }
 
     @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Book> getBookDetail(@PathVariable long id) {
-        ResponseEntity<Book> responseEntity = null;
-        bookService.getBookDetail(id);
-        responseEntity = ResponseEntity.ok().build();
+    public ResponseEntity getBookDetail(@PathVariable long id) {
+        ResponseEntity responseEntity = null;
+        try {
+            bookService.getBookDetail(id);
+            responseEntity = ResponseEntity.ok().body(bookService.getBookDetail(id));
+        } catch (Exception e) {
+            responseEntity = ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
+        }
         return responseEntity;
+
     }
 }
