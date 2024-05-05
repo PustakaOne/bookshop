@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -115,6 +116,32 @@ public class CartServiceImplTest {
         assertEquals(bookCart.getBook(), deletedBook);
     }
 
+    @Test
+    void testFinishPayment() {
+        Long userId = 1L;
+        Cart cart = new Cart(userId);
+        when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(cart);
+
+        cartService.finishPayment(userId);
+
+        assertEquals("selesai", cart.getStatus());
+        verify(cartRepository).save(cart);
+    }
+
+    @Test
+    void testGetCarts() {
+        Cart existingCart = new Cart(1L);
+        Cart existingCart2 = new Cart(2L);
+        Cart existingCart3 = new Cart(3L);
+        List<Cart> list = new ArrayList<>();
+        list.add(existingCart);
+        list.add(existingCart2);
+        list.add(existingCart3);
+        when(cartRepository.findAll()).thenReturn(list);
+        ResponseEntity<List<Cart>> result = cartService.getCarts();
+        assertEquals(ResponseEntity.ok(list), result);
+
+    }
 
 
 }

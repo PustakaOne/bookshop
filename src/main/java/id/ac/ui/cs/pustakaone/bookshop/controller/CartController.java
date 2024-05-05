@@ -12,6 +12,9 @@ import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.service.CartService;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookCartService;
 
+import java.util.HashMap;
+import java.util.List;
+
 @RestController
 @RequestMapping("/shop/cart")
 public class CartController {
@@ -98,8 +101,17 @@ public class CartController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/getCarts")
+    public ResponseEntity<List<Cart>> getCarts() {
+        return cartService.getCarts();
+    }
+
+    @PostMapping("/finishPayments")
+    public ResponseEntity<?> finishPayments(@RequestBody HashMap<String, String> body) {
+        Long idCart = Long.valueOf(body.get("idCart"));
+        return cartService.finishPayment(idCart);
+    }
 }
-
-
 
 //

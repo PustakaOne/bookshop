@@ -2,11 +2,14 @@ package id.ac.ui.cs.pustakaone.bookshop.service;
 
 import id.ac.ui.cs.pustakaone.bookshop.repository.BookCartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.repository.CartRepository;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
@@ -59,6 +62,20 @@ public class CartServiceImpl implements CartService {
         cartRepository.save(cart);
     }
 
+    @Override
+    public ResponseEntity<List<Cart>> getCarts(){
+        List<Cart> carts = cartRepository.findAll();
+        return ResponseEntity.ok(carts);
+    }
+
+    @Override
+    public ResponseEntity<?> finishPayment(Long idCart) {
+        Cart cart = this.getCartByUserId(idCart);
+        cart.setStatus("selesai");
+        cart.setPaidAt(new Date());
+        cartRepository.save(cart);
+        return ResponseEntity.ok(cart);
+    }
 
     @Override
     public Book deleteBookFromCart(Long userId, Long bookCartId) {
