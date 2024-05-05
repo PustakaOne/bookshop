@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -15,6 +16,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.service.CartService;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookCartService;
+
+import java.util.HashMap;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -122,5 +125,30 @@ public class CartControllerTest {
 
         assertNotNull(response);
         assertEquals(500, response.getStatusCodeValue());
+    }
+
+    @Test
+    public void testFinishPayments() {
+        Long idCart = 1L;
+        HashMap<String, String> body = new HashMap<>();
+        body.put("idCart", "1");
+        when(cartService.finishPayment(idCart)).thenReturn(ResponseEntity.ok().build());
+
+        ResponseEntity<?> response = cartController.finishPayments(body);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(cartService).finishPayment(idCart);
+    }
+
+    @Test
+    public void testFinishPayments_BadRequest() {
+
+        HashMap<String, String> body = new HashMap<>();
+        Exception exception = assertThrows(NumberFormatException.class, () -> {
+            cartController.finishPayments(body);
+        });
+
+        assertTrue(exception.getMessage().contains("null"));
+        verify(cartService, never()).finishPayment(anyLong());
     }
 }
