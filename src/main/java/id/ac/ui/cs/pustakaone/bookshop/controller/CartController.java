@@ -1,35 +1,80 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.service.CartServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
+import id.ac.ui.cs.pustakaone.bookshop.service.CartService;
+import id.ac.ui.cs.pustakaone.bookshop.service.BookCartService;
+
 @RestController
 @RequestMapping("/shop/cart")
 public class CartController {
+
+    private  CartService cartService;
+    private  BookCartService bookCartService;
+
     @Autowired
-    CartServiceImpl cartService;
-
-    @PostMapping("/add/{bookId}")
-    public String addBookToCart(@PathVariable("bookId") int bookId) {
-        return "Successfully added Book " + bookId + " to cart";
+    public CartController(CartService cartService, BookCartService bookCartService) {
+        this.cartService = cartService;
+        this.bookCartService = bookCartService;
     }
 
-    @PostMapping("/update/{bookId}")
-    public String updateBookQuantity(@PathVariable("bookId") int bookId) {
-        return "Successfully updated quantity for Book " + bookId + " in cart";
+    @GetMapping("/get/{userId}")
+    public ResponseEntity<Cart> getCartByUserId(@PathVariable Long userId) {
+        try {
+            Cart cart = cartService.getCartByUserId(userId);
+            return ResponseEntity.ok(cart);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
-    @PostMapping("/checkout")
-    public String checkoutCart() {
-        return "Checkout successful";
+    @PostMapping("/checkout/{userId}")
+    public ResponseEntity<Void> checkoutCart(@PathVariable Long userId) {
+        try {
+            cartService.checkoutCart(userId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
-    @PostMapping("/pay")
-    public String payCart() {
-        return "Payment successful";
+    @PostMapping("/cancel/{userId}")
+    public ResponseEntity<Void> cancelPayment(@PathVariable Long userId) {
+        try {
+            cartService.cancelPay(userId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/pay/{userId}")
+    public ResponseEntity<Void> payCart(@PathVariable Long userId) {
+        try {
+            cartService.payCart(userId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/addBook/{userId}/{bookId}/{amount}")
+    public ResponseEntity<?> addBookToCart(@PathVariable Long userId, @PathVariable Long bookId, @PathVariable int amount) {
+        try {
+            var bookCart = bookCartService.addBookToCart(userId, bookId, amount);
+            return ResponseEntity.ok(bookCart);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("/{userId}")
@@ -42,4 +87,19 @@ public class CartController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    @PutMapping("/updateBook/{userId}/{bookCartId}/{newAmount}")
+    public ResponseEntity<?> updateBookAmountInCart(@PathVariable Long userId, @PathVariable Long bookCartId, @PathVariable int newAmount) {
+        try {
+            var bookCart = bookCartService.updateBookAmountInCart(userId, bookCartId, newAmount);
+            return ResponseEntity.ok(bookCart);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
+
+
+
+//

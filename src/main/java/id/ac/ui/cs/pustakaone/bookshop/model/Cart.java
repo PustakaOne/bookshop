@@ -28,6 +28,9 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "lastId")
+    private Long lastId; //last idcart yang sudah di paid, remember id itu increment
+
     @Column(name = "userId")
     private Long userId;
 

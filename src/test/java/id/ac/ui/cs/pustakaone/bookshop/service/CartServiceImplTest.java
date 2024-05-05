@@ -1,34 +1,78 @@
 package id.ac.ui.cs.pustakaone.bookshop.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.repository.BookCartRepository;
 import id.ac.ui.cs.pustakaone.bookshop.repository.CartRepository;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-@ExtendWith(MockitoExtension.class)
 public class CartServiceImplTest {
 
-    @InjectMocks
-    CartServiceImpl cartService;
-
     @Mock
-    CartRepository cartRepository;
+    private CartRepository cartRepository;
+
+    @InjectMocks
+    private CartServiceImpl cartService;
 
     @Mock
     BookCartRepository bookCartRepository;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    void testGetCartByUserId_CartExists() {
+        Long userId = 1L;
+        Cart existingCart = new Cart(userId);
+        when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(existingCart);
+
+        Cart cart = cartService.getCartByUserId(userId);
+
+        assertNotNull(cart);
+        assertEquals(userId, cart.getUserId());
+    }
+
+    @Test
+    void testGetCartByUserId_CartDoesNotExist() {
+        Long userId = 1L;
+        when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(null);
+
+        Cart cart = cartService.getCartByUserId(userId);
+
+        assertNotNull(cart);
+        assertEquals(userId, cart.getUserId());
+        verify(cartRepository).save(cart);
+    }
+
+    @Test
+    void testPayCart() {
+        Long userId = 1L;
+        Cart cart = new Cart(userId);
+        when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(cart);
+
+        cartService.payCart(userId);
+
+        assertEquals("menunggu pengiriman", cart.getStatus());
+        assertTrue(cart.isPaymentSuccess());
+        assertNotNull(cart.getPaidAt());
+        verify(cartRepository).save(cart);
+    }
 
     @Test
     public void testGetExistCartByUserId() {
@@ -70,4 +114,7 @@ public class CartServiceImplTest {
 
         assertEquals(bookCart.getBook(), deletedBook);
     }
+
+
+
 }

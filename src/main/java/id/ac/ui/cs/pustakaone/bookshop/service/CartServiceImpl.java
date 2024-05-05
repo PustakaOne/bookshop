@@ -1,24 +1,26 @@
 package id.ac.ui.cs.pustakaone.bookshop.service;
 
-import id.ac.ui.cs.pustakaone.bookshop.model.Book;
-import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
-import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.repository.BookCartRepository;
-import id.ac.ui.cs.pustakaone.bookshop.repository.CartRepository;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
+import id.ac.ui.cs.pustakaone.bookshop.repository.CartRepository;
+
+import java.util.Date;
+
+import id.ac.ui.cs.pustakaone.bookshop.model.Book;
+import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@RequiredArgsConstructor
-public class CartServiceImpl implements CartService {
-    @Autowired
-    CartRepository cartRepository;
 
+@Service
+public class CartServiceImpl implements CartService {
+
+    @Autowired
+    private CartRepository cartRepository;
     @Autowired
     BookCartRepository bookCartRepository;
 
@@ -31,6 +33,32 @@ public class CartServiceImpl implements CartService {
         }
         return cart;
     }
+
+
+    @Override
+    public void checkoutCart(Long userId) {
+
+        Cart cart = this.getCartByUserId(userId);
+        cart.setStatus("processed");
+        cartRepository.save(cart);
+    }
+
+    @Override
+    public void cancelPay(Long userId) {
+        Cart cart = this.getCartByUserId(userId);
+        cart.setStatus("belum");
+        cartRepository.save(cart);
+    }
+
+    @Override
+    public void payCart(Long userId) {
+        Cart cart = this.getCartByUserId(userId);
+        cart.setStatus("menunggu pengiriman");
+        cart.setPaymentSuccess(true);
+        cart.setPaidAt(new Date());
+        cartRepository.save(cart);
+    }
+
 
     @Override
     public Book deleteBookFromCart(Long userId, Long bookCartId) {

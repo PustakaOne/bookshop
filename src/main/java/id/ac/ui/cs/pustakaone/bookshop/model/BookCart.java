@@ -22,7 +22,7 @@ public class BookCart {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "book_id",referencedColumnName = "id")
+    @JoinColumn(name = "book_id",referencedColumnName = "book_id")
     private Book book;
 
     @ManyToOne
