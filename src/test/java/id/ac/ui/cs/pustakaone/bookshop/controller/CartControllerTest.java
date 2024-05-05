@@ -1,13 +1,19 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
+import id.ac.ui.cs.pustakaone.bookshop.service.CartServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -17,6 +23,9 @@ public class CartControllerTest {
 
     @InjectMocks
     private CartController cartController;
+
+    @Mock
+    private CartServiceImpl cartService;
 
     @BeforeEach
     void setUp() {
@@ -51,5 +60,21 @@ public class CartControllerTest {
         mockMvc.perform(post("/shop/cart/pay"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Payment successful"));
+    }
+
+    @Test
+    public void testGetCart() throws Exception {
+        Cart cart = new Cart(1L);
+        when(cartService.getCartByUserId(1L)).thenReturn(cart);
+        mockMvc.perform(get("/shop/cart/" + 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paymentSuccess").value(false));
+    }
+
+    @Test
+    public void testDeleteBookFromCart() throws Exception {
+        mockMvc.perform(delete("/shop/cart/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Success delete book from cart"));
     }
 }
