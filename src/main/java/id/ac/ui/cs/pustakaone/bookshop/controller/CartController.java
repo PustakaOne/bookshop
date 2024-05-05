@@ -2,6 +2,10 @@ package id.ac.ui.cs.pustakaone.bookshop.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
+import id.ac.ui.cs.pustakaone.bookshop.service.CartServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
@@ -15,8 +19,8 @@ import java.util.List;
 @RequestMapping("/shop/cart")
 public class CartController {
 
-    private final CartService cartService;
-    private final BookCartService bookCartService;
+    private  CartService cartService;
+    private  BookCartService bookCartService;
 
     @Autowired
     public CartController(CartService cartService, BookCartService bookCartService) {
@@ -76,6 +80,16 @@ public class CartController {
         }
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<Cart> getCart(@PathVariable String userId) {
+        try {
+            Cart cart = cartService.getCartByUserId(Long.parseLong(userId));
+            return ResponseEntity.ok(cart);
+        } catch (Exception err) {
+            System.out.println(err);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
     @PutMapping("/updateBook/{userId}/{bookCartId}/{newAmount}")
     public ResponseEntity<?> updateBookAmountInCart(@PathVariable Long userId, @PathVariable Long bookCartId, @PathVariable int newAmount) {
         try {
@@ -99,3 +113,5 @@ public class CartController {
         return cartService.finishPayment(idCart);
     }
 }
+
+//

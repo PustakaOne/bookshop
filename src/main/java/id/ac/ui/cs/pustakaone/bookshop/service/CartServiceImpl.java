@@ -1,5 +1,6 @@
 package id.ac.ui.cs.pustakaone.bookshop.service;
 
+import id.ac.ui.cs.pustakaone.bookshop.repository.BookCartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,11 +11,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import id.ac.ui.cs.pustakaone.bookshop.model.Book;
+import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
+import jakarta.persistence.EntityNotFoundException;
+
+import java.util.List;
+import java.util.Optional;
+
+
 @Service
 public class CartServiceImpl implements CartService {
 
     @Autowired
     private CartRepository cartRepository;
+    @Autowired
+    BookCartRepository bookCartRepository;
+
     @Override
     public Cart getCartByUserId(Long userId) {
         Cart cart = cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId);
@@ -65,4 +77,29 @@ public class CartServiceImpl implements CartService {
         return ResponseEntity.ok(cart);
     }
 
+    @Override
+    public Book deleteBookFromCart(Long userId, Long bookCartId) {
+        Optional<BookCart> bookCart = bookCartRepository.findById(bookCartId);
+
+        if (bookCart.isEmpty()) {
+            throw new EntityNotFoundException("Bookcart not found! 1");
+        }
+
+        Cart cart = cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId);
+        if (cart == null) {
+            throw new EntityNotFoundException("Bookcart not found! 2");
+        }
+
+        List<BookCart> bookCarts = cart.getBookCarts();
+
+        if (!bookCarts.contains(bookCart.get())) {
+            throw new EntityNotFoundException("Bookcart not found! 3");
+        }
+
+        bookCarts.remove(bookCart);
+
+        bookCartRepository.delete(bookCart.get());
+
+        return bookCart.get().getBook();
+    }
 }

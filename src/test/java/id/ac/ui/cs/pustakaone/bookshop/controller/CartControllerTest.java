@@ -1,5 +1,6 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,8 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.test.web.servlet.MockMvc;
 
-import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.service.CartService;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookCartService;
 
@@ -21,10 +22,16 @@ import java.util.HashMap;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+
 
 @ExtendWith(MockitoExtension.class)
 public class CartControllerTest {
 
+    private MockMvc mockMvc;
     @Mock
     private CartService cartService;
 
@@ -150,5 +157,21 @@ public class CartControllerTest {
 
         assertTrue(exception.getMessage().contains("null"));
         verify(cartService, never()).finishPayment(anyLong());
+    }
+
+    @Test
+    public void testGetCart() throws Exception {
+        Cart cart = new Cart(1L);
+        when(cartService.getCartByUserId(1L)).thenReturn(cart);
+        mockMvc.perform(get("/shop/cart/" + 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.paymentSuccess").value(false));
+    }
+
+    @Test
+    public void testDeleteBookFromCart() throws Exception {
+        mockMvc.perform(delete("/shop/cart/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Success delete book from cart"));
     }
 }

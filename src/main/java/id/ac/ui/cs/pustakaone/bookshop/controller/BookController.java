@@ -4,7 +4,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/book")
 public class BookController {
     @GetMapping("books")
     public String getBooks() {
