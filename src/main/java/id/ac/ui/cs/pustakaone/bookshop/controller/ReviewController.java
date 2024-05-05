@@ -1,32 +1,98 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import id.ac.ui.cs.pustakaone.bookshop.model.Review;
+import id.ac.ui.cs.pustakaone.bookshop.service.ReviewService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Iterator;
+import java.util.List;
+
 @RestController
-@RequestMapping("/review")
 public class ReviewController {
-    @GetMapping("/{bookId}/add")
-    public String createReview(@PathVariable("bookId") int bookId) {
-        return "Create Review for Book 1";
+    @Autowired
+    private ReviewService reviewService;
+
+    @RequestMapping(value = "/review/{bookId}/add", method = RequestMethod.POST)
+    public ResponseEntity createReview(@PathVariable("bookId") long bookId, @RequestBody Review review) {
+        ResponseEntity responseEntity = null;
+
+        try {
+            reviewService.createReview(review);
+            responseEntity = ResponseEntity.ok().build();
+        } catch (Exception e) {
+            System.out.println("Error in add book!");
+            responseEntity = ResponseEntity.badRequest().body(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return responseEntity;
     }
 
-    @GetMapping("/{bookId}")
-    public String getReview(@PathVariable("bookId") int bookId) {
-        return "Reviews for Book 1";
+
+    @RequestMapping(value = "/review/{bookId}", method = RequestMethod.GET)
+    public ResponseEntity getReview(@PathVariable("bookId") long bookId) {
+        ResponseEntity responseEntity = null;
+
+        try {
+            List<Review> result = reviewService.getAllBookReview(bookId);
+            responseEntity = ResponseEntity.ok().body(result);
+        } catch (Exception e) {
+            System.out.println("Error in get review!");
+            responseEntity = ResponseEntity.badRequest().body(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return responseEntity;
     }
 
-    @GetMapping("/{bookId}/{reviewId}/update")
-    public String updateReview(@PathVariable("bookId") int bookId, @PathVariable("reviewId") int reviewId) {
-        return "Update reviewId 1 in bookId 1";
+    @RequestMapping(value = "/review/{bookId}/{reviewId}/update", method = RequestMethod.PUT)
+    public ResponseEntity updateReview(@PathVariable("bookId") long bookId, @PathVariable("reviewId") long reviewId, @RequestBody Review review) {
+        ResponseEntity responseEntity = null;
+
+        try {
+            reviewService.updateReview(review);
+            responseEntity = ResponseEntity.ok().build();
+        } catch (Exception e) {
+            System.out.println("Error in add book!");
+            responseEntity = ResponseEntity.badRequest().body(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return responseEntity;
     }
 
-    @GetMapping("/{bookId}/{reviewId}/delete")
-    public String deleteReview(@PathVariable("bookId") int bookId, @PathVariable("reviewId") int reviewId) {
-        return "Delete review Id 1 in BookId 1";
+    @RequestMapping(value = "/review/{bookId}/{reviewId}/delete", method = RequestMethod.DELETE)
+    public ResponseEntity deleteReview(@PathVariable("bookId") long bookId, @PathVariable("reviewId") long reviewId) {
+        ResponseEntity responseEntity = null;
+
+        try {
+            reviewService.deleteReview(reviewId);
+            responseEntity = ResponseEntity.ok().build();
+        } catch (Exception e) {
+            System.out.println("Error in delete book!");
+            responseEntity = ResponseEntity.badRequest().body(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return responseEntity;
     }
 
-    @GetMapping("/{bookId}/delete")
-    public String deleteAllReviews(@PathVariable("bookId") int bookId) {
-        return "Delete all review for book id 1";
+    @RequestMapping(value = "/review/{bookId}/delete", method = RequestMethod.DELETE)
+    public ResponseEntity deleteAllReviews(@PathVariable("bookId") long bookId) {
+        Review review = null;
+        List<Review> reviews = reviewService.getAllBookReview(bookId);
+        ResponseEntity responseEntity = null;
+        Iterator<Review> iterator = reviews.iterator();
+
+        try {
+            while (iterator.hasNext()) {
+                review = iterator.next();
+                reviewService.deleteReview(review.getReviewId());
+            }
+            responseEntity = ResponseEntity.ok().build();
+        } catch (Exception e) {
+            responseEntity = ResponseEntity.badRequest().body(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return  responseEntity;
     }
 }
