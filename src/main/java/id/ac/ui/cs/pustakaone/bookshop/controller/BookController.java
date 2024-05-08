@@ -1,17 +1,22 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import id.ac.ui.cs.pustakaone.bookshop.dto.BookWithReviewsDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
+import id.ac.ui.cs.pustakaone.bookshop.model.Review;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookService;
+import id.ac.ui.cs.pustakaone.bookshop.service.ReviewServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.concurrent.Future;
 
 @RestController
 public class BookController {
     @Autowired
     private BookService bookService;
+    private ReviewServiceImpl reviewService;
 
     @RequestMapping(value = "/books", method = RequestMethod.GET)
     public ResponseEntity getAllBooks() {
@@ -29,7 +34,10 @@ public class BookController {
     public ResponseEntity getBookDetail(@PathVariable long id) {
         ResponseEntity responseEntity = null;
         try {
-            bookService.getBookDetail(id);
+            Book book = bookService.getBookDetail(id);
+            Future<List<Review>> reviewFuture = reviewService.getReviews(id);
+            List<Review> reviews = reviewFuture.get();
+            BookWithReviewsDTO bookWithReviewsDTO = new BookWithReviewsDTO(book, reviews);
             responseEntity = ResponseEntity.ok().body(bookService.getBookDetail(id));
         } catch (Exception e) {
             responseEntity = ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);

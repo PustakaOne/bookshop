@@ -3,10 +3,12 @@ package id.ac.ui.cs.pustakaone.bookshop.service;
 import id.ac.ui.cs.pustakaone.bookshop.model.Review;
 import id.ac.ui.cs.pustakaone.bookshop.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -57,5 +59,11 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void deleteReview(long id) {
         reviewRepository.deleteById(id);
+    }
+
+    @Async
+    public CompletableFuture<List<Review>> getReviews(long bookId) {
+        List<Review> reviews = reviewRepository.findByBookId(bookId);
+        return CompletableFuture.completedFuture(reviews);
     }
 }
