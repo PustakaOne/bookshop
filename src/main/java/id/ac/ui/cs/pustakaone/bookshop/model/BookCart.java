@@ -1,33 +1,49 @@
 package id.ac.ui.cs.pustakaone.bookshop.model;
 
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@Getter
+@Setter
+@Table(name = "BookCart")
+@Entity
 public class BookCart {
-
-    private String id;
-    private Book book;
-    private Cart cart;
-
-    @Getter
-    private int amount;
-
-    public BookCart(String id, Book book, Cart cart, int amount) {
-        this.id = id;
+    public BookCart(Book book, Cart cart, int amount) {
         this.book = book;
         this.cart = cart;
         this.amount = amount;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "book_id",referencedColumnName = "book_id")
+    private Book book;
+
+    @ManyToOne
+    @JoinColumn(name = "cart_id",referencedColumnName = "id")
+    private Cart cart;
+
+    @Column(name = "amount")
+    private int amount;
+
     public void incrementAmount() {
+        if (this.amount == this.book.getStock()) {
+            throw new IllegalStateException("Jumlah barang melebihi stock yang tersedia!");
+        }
         this.amount++;
     }
 
     public void decrementAmount() {
+        if (this.amount == 1) {
+            throw new IllegalStateException("Jumlah barang tidak boleh 0");
+        }
         this.amount--;
-    }
-
-    public long getBookCartDetail() {
-        return this.book.getBookId();
     }
 
 }
