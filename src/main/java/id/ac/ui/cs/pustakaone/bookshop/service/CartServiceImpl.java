@@ -37,6 +37,12 @@ public class CartServiceImpl implements CartService {
         return cart;
     }
 
+    public List<Cart> getUserPaymentHistory(Long userId){
+        return cartRepository.findByUserIdAndPaymentSuccessIsTrue(userId);
+    }
+
+
+
 
     @Override
     public void checkoutCart(Long userId) {
@@ -61,6 +67,8 @@ public class CartServiceImpl implements CartService {
         cart.setPaidAt(new Date());
         cartRepository.save(cart);
     }
+
+
 
     @Override
     public ResponseEntity<List<Cart>> getCarts(){
@@ -96,9 +104,12 @@ public class CartServiceImpl implements CartService {
             throw new EntityNotFoundException("Bookcart not found! 3");
         }
 
-        bookCarts.remove(bookCart);
+//        bookCarts.remove(bookCart);
+        cart.getBookCarts().remove(bookCart); //edbert edit
 
         bookCartRepository.delete(bookCart.get());
+
+        cartRepository.save(cart);
 
         return bookCart.get().getBook();
     }

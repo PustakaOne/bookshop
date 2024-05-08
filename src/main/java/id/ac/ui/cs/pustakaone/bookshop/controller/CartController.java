@@ -38,6 +38,22 @@ public class CartController {
         }
     }
 
+    @GetMapping("/history/{userId}")
+    public ResponseEntity<List<Cart>> getPaymentHistory(@PathVariable Long userId){
+        try{
+            List<Cart> paymentHistory = cartService.getUserPaymentHistory(userId);
+            if(paymentHistory.isEmpty()){
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(paymentHistory);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+
+    }
+
+
+
     @PostMapping("/checkout/{userId}")
     public ResponseEntity<Void> checkoutCart(@PathVariable Long userId) {
         try {
@@ -68,17 +84,17 @@ public class CartController {
         }
     }
 
-    @PostMapping("/addBook/{userId}/{bookId}/{amount}")
-    public ResponseEntity<?> addBookToCart(@PathVariable Long userId, @PathVariable Long bookId, @PathVariable int amount) {
-        try {
-            var bookCart = bookCartService.addBookToCart(userId, bookId, amount);
-            return ResponseEntity.ok(bookCart);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
+//    @PostMapping("/addBook/{userId}/{bookId}/{amount}")
+//    public ResponseEntity<?> addBookToCart(@PathVariable Long userId, @PathVariable Long bookId, @PathVariable int amount) {
+//        try {
+//            var bookCart = bookCartService.addBookToCart(userId, bookId, amount);
+//            return ResponseEntity.ok(bookCart);
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (Exception e) {
+//            return ResponseEntity.internalServerError().build();
+//        }
+//    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<Cart> getCart(@PathVariable String userId) {
@@ -90,17 +106,17 @@ public class CartController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    @PutMapping("/updateBook/{userId}/{bookCartId}/{newAmount}")
-    public ResponseEntity<?> updateBookAmountInCart(@PathVariable Long userId, @PathVariable Long bookCartId, @PathVariable int newAmount) {
-        try {
-            var bookCart = bookCartService.updateBookAmountInCart(userId, bookCartId, newAmount);
-            return ResponseEntity.ok(bookCart);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
+//    @PutMapping("/updateBook/{userId}/{bookCartId}/{newAmount}")
+//    public ResponseEntity<?> updateBookAmountInCart(@PathVariable Long userId, @PathVariable Long bookCartId, @PathVariable int newAmount) {
+//        try {
+//            var bookCart = bookCartService.updateBookAmountInCart(userId, bookCartId, newAmount);
+//            return ResponseEntity.ok(bookCart);
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (Exception e) {
+//            return ResponseEntity.internalServerError().build();
+//        }
+//    }
 
     @GetMapping("/getCarts")
     public ResponseEntity<List<Cart>> getCarts() {
