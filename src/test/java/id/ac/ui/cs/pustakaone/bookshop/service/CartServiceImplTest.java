@@ -143,5 +143,23 @@ public class CartServiceImplTest {
 
     }
 
+    @Test
+    void testGetUserPaymentHistory() {
+        Long userId = 1L;
+        List<Cart> expectedCarts = new ArrayList<>();
+        expectedCarts.add(new Cart(userId)); // Assume this cart represents a completed payment.
+
+        when(cartRepository.findByUserIdAndPaymentSuccessIsTrue(userId)).thenReturn(expectedCarts);
+
+        List<Cart> actualCarts = cartService.getUserPaymentHistory(userId);
+        assertEquals(1,actualCarts.size());
+        assertNotNull(actualCarts);
+        assertFalse(actualCarts.isEmpty());
+        assertEquals(expectedCarts.size(), actualCarts.size());
+        verify(cartRepository).findByUserIdAndPaymentSuccessIsTrue(userId);
+    }
+
+
+
 
 }
