@@ -174,9 +174,10 @@ public class CartControllerTest {
     @Test
     public void testDeleteBookFromCart() throws Exception {
         Book book = new Book();
+        book.setBookId(1L);
         when(cartService.deleteBookFromCart(1L, 1L)).thenReturn(book);
         mockMvc.perform(delete("/shop/cart/1/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Success delete book with id 1"));
+                .andExpect(jsonPath("$.message").value("Success delete book with id 1"));
     }
 }
