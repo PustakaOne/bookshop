@@ -1,5 +1,6 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
 import org.junit.jupiter.api.BeforeEach;
@@ -172,8 +173,10 @@ public class CartControllerTest {
 
     @Test
     public void testDeleteBookFromCart() throws Exception {
-        mockMvc.perform(delete("/shop/cart/1"))
+        Book book = new Book();
+        when(cartService.deleteBookFromCart(1L, 1L)).thenReturn(book);
+        mockMvc.perform(delete("/shop/cart/1/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Success delete book from cart"));
+                .andExpect(content().string("Success delete book with id 1"));
     }
 }
