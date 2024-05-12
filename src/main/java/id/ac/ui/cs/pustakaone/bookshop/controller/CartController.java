@@ -1,6 +1,11 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import id.ac.ui.cs.pustakaone.bookshop.model.Book;
+import id.ac.ui.cs.pustakaone.bookshop.utils.ResponseUtil;
+import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.service.CartServiceImpl;
@@ -12,6 +17,7 @@ import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.service.CartService;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookCartService;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 
@@ -111,6 +117,19 @@ public class CartController {
     public ResponseEntity<?> finishPayments(@RequestBody HashMap<String, String> body) {
         Long idCart = Long.valueOf(body.get("idCart"));
         return cartService.finishPayment(idCart);
+    }
+
+    @DeleteMapping("/{userId}/{bookCartId}")
+    public ResponseEntity<Object> deleteBookCartFromCart(@PathVariable Long userId, @PathVariable Long bookCartId) {
+        try {
+            Book deletedBook = this.cartService.deleteBookFromCart(userId, bookCartId);
+            return ResponseUtil.generateResponse("Success delete book with id " + deletedBook.getBookId(), HttpStatus.OK);
+        } catch(EntityNotFoundException err) {
+            return ResponseUtil.generateResponse(err.getMessage(), HttpStatus.NOT_FOUND);
+        } catch(Exception err) {
+            System.out.println(err);
+            return ResponseUtil.generateResponse(err.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
 

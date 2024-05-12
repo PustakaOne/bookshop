@@ -82,18 +82,18 @@ public class CartServiceImpl implements CartService {
         Optional<BookCart> bookCart = bookCartRepository.findById(bookCartId);
 
         if (bookCart.isEmpty()) {
-            throw new EntityNotFoundException("Bookcart not found! 1");
+            throw new EntityNotFoundException("Bookcart not found!");
         }
 
         Cart cart = cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId);
         if (cart == null) {
-            throw new EntityNotFoundException("Bookcart not found! 2");
+            throw new EntityNotFoundException("Bookcart not found!");
         }
 
         List<BookCart> bookCarts = cart.getBookCarts();
 
         if (!bookCarts.contains(bookCart.get())) {
-            throw new EntityNotFoundException("Bookcart not found! 3");
+            throw new EntityNotFoundException("Bookcart not found!");
         }
 
         bookCarts.remove(bookCart);
