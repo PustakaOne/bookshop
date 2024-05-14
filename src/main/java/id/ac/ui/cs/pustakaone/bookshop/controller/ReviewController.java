@@ -61,8 +61,8 @@ public class ReviewController {
         return responseEntity;
     }
 
-    @RequestMapping(value = "/review/{reviewId}/delete", method = RequestMethod.DELETE)
-    public ResponseEntity deleteReview(@PathVariable("reviewId") long reviewId) {
+    @RequestMapping(value = "/review/{bookId}/{reviewId}/delete", method = RequestMethod.DELETE)
+    public ResponseEntity deleteReview(@PathVariable("bookId") long bookId, @PathVariable("reviewId") long reviewId) {
         ResponseEntity responseEntity = null;
 
         try {
