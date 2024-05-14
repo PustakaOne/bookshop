@@ -90,7 +90,7 @@ public class ReviewControllerTest {
     void testDeleteReview() throws Exception {
         doNothing().when(reviewService).deleteReview(1L);
 
-        mockMvc.perform(delete("/review/1/1/delete"))
+        mockMvc.perform(delete("/review/1/delete"))
                 .andExpect(status().isOk());
     }
 
