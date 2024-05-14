@@ -38,7 +38,7 @@ public class BookController {
             Future<List<Review>> reviewFuture = reviewService.getReviews(id);
             List<Review> reviews = reviewFuture.get();
             BookWithReviewsDTO bookWithReviewsDTO = new BookWithReviewsDTO(book, reviews);
-            responseEntity = ResponseEntity.ok().body(bookService.getBookDetail(id));
+            responseEntity = ResponseEntity.ok().body(bookWithReviewsDTO);
         } catch (Exception e) {
             responseEntity = ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
         }
