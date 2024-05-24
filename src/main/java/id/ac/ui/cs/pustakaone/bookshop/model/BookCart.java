@@ -1,5 +1,6 @@
 package id.ac.ui.cs.pustakaone.bookshop.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class BookCart {
 
     @ManyToOne
     @JoinColumn(name = "cart_id",referencedColumnName = "id")
+    @JsonBackReference
     private Cart cart;
 
     @Column(name = "amount")

@@ -53,4 +53,12 @@ public class Book {
 
     @Column(name = "lang")
     private String lang;
+
+    public void decrementStock(int amount) {
+        if (this.stock < amount) {
+            throw new IllegalStateException("Insufficient stock available");
+        }
+        this.stock -= amount;
+    }
+
 }

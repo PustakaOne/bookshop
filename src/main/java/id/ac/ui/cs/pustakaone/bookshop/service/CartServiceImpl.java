@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.repository.CartRepository;
-
+import id.ac.ui.cs.pustakaone.bookshop.repository.BookRepository;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +26,8 @@ public class CartServiceImpl implements CartService {
     private CartRepository cartRepository;
     @Autowired
     BookCartRepository bookCartRepository;
+    @Autowired
+    BookRepository bookRepository;
 
     @Override
     public Cart getCartByUserId(Long userId) {
@@ -36,6 +38,12 @@ public class CartServiceImpl implements CartService {
         }
         return cart;
     }
+
+    public List<Cart> getUserPaymentHistory(Long userId){
+        return cartRepository.findByUserIdAndPaymentSuccessIsTrue(userId);
+    }
+
+
 
 
     @Override
@@ -56,11 +64,20 @@ public class CartServiceImpl implements CartService {
     @Override
     public void payCart(Long userId) {
         Cart cart = this.getCartByUserId(userId);
+
+        for (BookCart bookCart : cart.getBookCarts()) {
+            Book book = bookCart.getBook();
+            book.decrementStock(bookCart.getAmount());
+            bookRepository.save(book);
+        }
+
         cart.setStatus("menunggu pengiriman");
         cart.setPaymentSuccess(true);
         cart.setPaidAt(new Date());
         cartRepository.save(cart);
     }
+
+
 
     @Override
     public ResponseEntity<List<Cart>> getCarts(){
@@ -96,9 +113,12 @@ public class CartServiceImpl implements CartService {
             throw new EntityNotFoundException("Bookcart not found! 3");
         }
 
-        bookCarts.remove(bookCart);
+//        bookCarts.remove(bookCart);
+        cart.getBookCarts().remove(bookCart); //edbert edit
 
         bookCartRepository.delete(bookCart.get());
+
+        cartRepository.save(cart);
 
         return bookCart.get().getBook();
     }

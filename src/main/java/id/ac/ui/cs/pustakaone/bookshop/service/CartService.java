@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CartService {
     Cart getCartByUserId(Long userId);
+    List<Cart> getUserPaymentHistory(Long UserId);
     void checkoutCart(Long cartId);
     void cancelPay(Long cartId);
     void payCart(Long cartId);

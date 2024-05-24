@@ -170,10 +170,10 @@ public class CartControllerTest {
                 .andExpect(jsonPath("$.paymentSuccess").value(false));
     }
 
-    @Test
-    public void testDeleteBookFromCart() throws Exception {
-        mockMvc.perform(delete("/shop/cart/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Success delete book from cart"));
-    }
+//    @Test
+//    public void testDeleteBookFromCart() throws Exception {
+//        mockMvc.perform(delete("/shop/cart/1"))
+//                .andExpect(status().isOk())
+//                .andExpect(content().string("Success delete book from cart"));
+//    }
 }

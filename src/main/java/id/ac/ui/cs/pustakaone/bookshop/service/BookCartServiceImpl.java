@@ -32,8 +32,8 @@ public class BookCartServiceImpl implements BookCartService {
         if (amount > book.getStock()) {
             throw new IllegalArgumentException("Amount exceeds stock available");
         }
-        BookCart bookCart = new BookCart(book, cart, amount);
-
+        BookCart bookCart = new BookCart(book,cart, amount);
+        cart.setTotalPrice(book.getPrice() * amount);
         cart.getBookCarts().add(bookCart);
         bookCartRepository.save(bookCart);
         cartRepository.save(cart);
@@ -55,6 +55,7 @@ public class BookCartServiceImpl implements BookCartService {
         }
         bookCart.setAmount(newAmount);
         cart.getBookCarts().add(bookCart);
+        cart.setTotalPrice(bookCart.getBook().getPrice() * newAmount);
 
         bookCartRepository.save(bookCart);
         cartRepository.save(cart);
