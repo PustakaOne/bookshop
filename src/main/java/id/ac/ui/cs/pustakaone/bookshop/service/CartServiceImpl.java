@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.repository.CartRepository;
-
+import id.ac.ui.cs.pustakaone.bookshop.repository.BookRepository;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +26,8 @@ public class CartServiceImpl implements CartService {
     private CartRepository cartRepository;
     @Autowired
     BookCartRepository bookCartRepository;
+    @Autowired
+    BookRepository bookRepository;
 
     @Override
     public Cart getCartByUserId(Long userId) {
@@ -62,6 +64,13 @@ public class CartServiceImpl implements CartService {
     @Override
     public void payCart(Long userId) {
         Cart cart = this.getCartByUserId(userId);
+
+        for (BookCart bookCart : cart.getBookCarts()) {
+            Book book = bookCart.getBook();
+            book.decrementStock(bookCart.getAmount());
+            bookRepository.save(book);
+        }
+
         cart.setStatus("menunggu pengiriman");
         cart.setPaymentSuccess(true);
         cart.setPaidAt(new Date());

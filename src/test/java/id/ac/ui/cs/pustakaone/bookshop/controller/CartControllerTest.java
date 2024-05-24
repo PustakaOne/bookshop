@@ -95,35 +95,35 @@ public class CartControllerTest {
         assertEquals(200, response.getStatusCodeValue());
     }
 
-//    @Test
-//    void addBookToCartTest() {
-//        Long userId = 1L;
-//        Long bookId = 1L;
-//        int amount = 2;
-//        BookCart bookCart = new BookCart();
-//        when(bookCartService.addBookToCart(userId, bookId, amount)).thenReturn(bookCart);
-//
-//        ResponseEntity<?> response = cartController.addBookToCart(userId, bookId, amount);
-//
-//        assertNotNull(response);
-//        assertEquals(200, response.getStatusCodeValue());
-//        assertEquals(bookCart, response.getBody());
-//    }
-//
-//    @Test
-//    void updateBookAmountInCartTest() {
-//        Long userId = 1L;
-//        Long bookCartId = 1L;
-//        int newAmount = 3;
-//        BookCart bookCart = new BookCart();
-//        when(bookCartService.updateBookAmountInCart(userId, bookCartId, newAmount)).thenReturn(bookCart);
-//
-//        ResponseEntity<?> response = cartController.updateBookAmountInCart(userId, bookCartId, newAmount);
-//
-//        assertNotNull(response);
-//        assertEquals(200, response.getStatusCodeValue());
-//        assertEquals(bookCart, response.getBody());
-//    }
+    @Test
+    void addBookToCartTest() {
+        Long userId = 1L;
+        Long bookId = 1L;
+        int amount = 2;
+        BookCart bookCart = new BookCart();
+        when(bookCartService.addBookToCart(userId, bookId, amount)).thenReturn(bookCart);
+
+        ResponseEntity<?> response = cartController.addBookToCart(userId, bookId, amount);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(bookCart, response.getBody());
+    }
+
+    @Test
+    void updateBookAmountInCartTest() {
+        Long userId = 1L;
+        Long bookCartId = 1L;
+        int newAmount = 3;
+        BookCart bookCart = new BookCart();
+        when(bookCartService.updateBookAmountInCart(userId, bookCartId, newAmount)).thenReturn(bookCart);
+
+        ResponseEntity<?> response = cartController.updateBookAmountInCart(userId, bookCartId, newAmount);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(bookCart, response.getBody());
+    }
 
     @Test
     void getCartByUserIdTest_NotFound() {
