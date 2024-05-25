@@ -43,6 +43,11 @@ public class BookController {
 
     @PostMapping(value = "/book")
     public ResponseEntity createBook(@RequestBody CreateBookDTO createBookDto) {
-        return null;
+        try {
+            Book newBook = bookService.createBook(createBookDto);
+            return ResponseEntity.ok().body(bookService.getBookDetail(newBook.getBookId()));
+        } catch(Exception e) {
+            return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
+        }
     }
 }
