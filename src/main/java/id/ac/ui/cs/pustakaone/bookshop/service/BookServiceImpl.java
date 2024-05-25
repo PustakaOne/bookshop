@@ -69,8 +69,21 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book createBook(CreateBookDTO createBookDto) {
-
-        return null;
+        Book newBook = Book.builder()
+                .title(createBookDto.getTitle())
+                .author(createBookDto.getAuthor())
+                .description(createBookDto.getDescription())
+                .price(createBookDto.getPrice())
+                .stock(createBookDto.getStock())
+                .releaseDate(createBookDto.getReleaseDate())
+                .coverUrl(createBookDto.getCoverUrl())
+                .publisher(createBookDto.getPublisher())
+                .isbn(createBookDto.getIsbn())
+                .pages(createBookDto.getPages())
+                .lang(createBookDto.getLang())
+                .category(createBookDto.getCategory())
+                .build();
+        return bookRepository.save(newBook);
     }
 
     @Override
