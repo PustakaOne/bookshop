@@ -28,6 +28,8 @@ public class CartServiceImpl implements CartService {
     BookCartRepository bookCartRepository;
     @Autowired
     BookRepository bookRepository;
+    @Autowired
+    PaymentService paymentService;
 
     @Override
     public Cart getCartByUserId(Long userId) {
@@ -43,9 +45,6 @@ public class CartServiceImpl implements CartService {
         return cartRepository.findByUserIdAndPaymentSuccessIsTrue(userId);
     }
 
-
-
-
     @Override
     public void checkoutCart(Long userId) {
 
@@ -53,7 +52,6 @@ public class CartServiceImpl implements CartService {
         cart.setStatus("processed");
         cartRepository.save(cart);
     }
-
     @Override
     public void cancelPay(Long userId) {
         Cart cart = this.getCartByUserId(userId);
@@ -64,17 +62,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public void payCart(Long userId) {
         Cart cart = this.getCartByUserId(userId);
-
-        for (BookCart bookCart : cart.getBookCarts()) {
-            Book book = bookCart.getBook();
-            book.decrementStock(bookCart.getAmount());
-            bookRepository.save(book);
-        }
-
-        cart.setStatus("menunggu pengiriman");
-        cart.setPaymentSuccess(true);
-        cart.setPaidAt(new Date());
-        cartRepository.save(cart);
+        paymentService.processPayment(cart);
     }
 
 
