@@ -14,7 +14,7 @@ import id.ac.ui.cs.pustakaone.bookshop.service.BookCartService;
 
 import java.util.HashMap;
 import java.util.List;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/shop/cart")
 public class CartController {
