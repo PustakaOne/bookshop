@@ -3,10 +3,14 @@ package id.ac.ui.cs.pustakaone.bookshop.service;
 import id.ac.ui.cs.pustakaone.bookshop.dto.CreateUpdateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.repository.BookRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -48,8 +52,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book updateBook(Long bookId, CreateUpdateBookDTO updateBookDto) {
-        Book existingBook = bookRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+        Optional<Book> optionalExistingBook = bookRepository.findById(bookId);
+        if (optionalExistingBook.isEmpty()) {
+            throw new EntityNotFoundException("Book with id " + bookId + " not found!");
+        }
+        Book existingBook = optionalExistingBook.get();
 
         if (updateBookDto.getTitle() != null) {
             existingBook.setTitle(updateBookDto.getTitle());
