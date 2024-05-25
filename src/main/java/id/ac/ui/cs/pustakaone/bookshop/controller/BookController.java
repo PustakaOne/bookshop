@@ -53,6 +53,13 @@ public class BookController {
 
     @PutMapping(value = "/book/{id}")
     public ResponseEntity updateBookDetail(@PathVariable long id, @RequestBody CreateUpdateBookDTO updateBookDto) {
-        return null;
+        try {
+            bookService.getBookDetail(id);
+            return ResponseEntity.ok().body(bookService.updateBook(id, updateBookDto));
+        } catch(EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
+        }
     }
 }
