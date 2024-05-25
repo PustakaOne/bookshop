@@ -38,6 +38,9 @@ public class CartServiceImplTest {
     @Mock
     private BookRepository bookRepository;
 
+    @Mock
+    private PaymentService paymentService;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -70,24 +73,12 @@ public class CartServiceImplTest {
     @Test
     void testPayCart() {
         Long userId = 1L;
-        Cart cart = new Cart(userId);
-        List<BookCart> bookCarts = new ArrayList<>();
-        Book book = mock(Book.class); // Mock the Book class
-        BookCart bookCart = new BookCart(book, cart, 1);
-        bookCarts.add(bookCart);
-        cart.setBookCarts(bookCarts);
-
+        Cart cart = cartService.getCartByUserId(userId);
         when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(cart);
-        doNothing().when(book).decrementStock(bookCart.getAmount());
-        when(book.getBookId()).thenReturn(1L);
 
         cartService.payCart(userId);
 
-        assertEquals("menunggu pengiriman", cart.getStatus());
-        assertTrue(cart.isPaymentSuccess());
-        assertNotNull(cart.getPaidAt());
-        verify(cartRepository).save(cart);
-        verify(bookRepository).save(book);
+        verify(paymentService).processPayment(cart);
     }
 
 
