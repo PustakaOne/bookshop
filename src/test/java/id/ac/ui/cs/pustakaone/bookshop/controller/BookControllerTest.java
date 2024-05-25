@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.ui.cs.pustakaone.bookshop.dto.CreateUpdateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookService;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,10 @@ public class BookControllerTest {
     private MockMvc mockMvc;
     private Book book;
 
+    private Book updatedBook;
+
     CreateUpdateBookDTO createBookDto;
+    CreateUpdateBookDTO updateBookDto;
 
     @BeforeEach
     void setUp() {
@@ -46,7 +50,15 @@ public class BookControllerTest {
                 .stock(20)
                 .price(200000)
                 .build();
+        updatedBook = Book.builder()
+                .bookId(1L)
+                .title("Updated title")
+                .author("Updated author")
+                .build();
         createBookDto = new CreateUpdateBookDTO();
+        updateBookDto = new CreateUpdateBookDTO();
+        updateBookDto.setTitle("Updated Title");
+        updateBookDto.setAuthor("Updated Author");
     }
 
     @Test
@@ -90,6 +102,40 @@ public class BookControllerTest {
         mockMvc.perform(post("/book")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(createBookDto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testUpdateBookDetailSuccess() throws Exception {
+        when(bookService.getBookDetail(anyLong())).thenReturn(book);
+        when(bookService.updateBook(anyLong(), any(CreateUpdateBookDTO.class))).thenReturn(updatedBook);
+
+        mockMvc.perform(put("/book/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(updateBookDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Updated title"))
+                .andExpect(jsonPath("$.author").value("Updated author"));
+    }
+
+    @Test
+    public void testUpdateBookDetailNotFound() throws Exception {
+        when(bookService.getBookDetail(anyLong())).thenThrow(new EntityNotFoundException("Book not found"));
+
+        mockMvc.perform(put("/book/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(updateBookDto)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testUpdateBookDetailBadRequest() throws Exception {
+        when(bookService.getBookDetail(anyLong())).thenReturn(book);
+        when(bookService.updateBook(anyLong(), any(CreateUpdateBookDTO.class))).thenThrow(new RuntimeException("Update failed"));
+
+        mockMvc.perform(put("/book/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(updateBookDto)))
                 .andExpect(status().isBadRequest());
     }
 }
