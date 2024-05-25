@@ -1,39 +1,70 @@
 package id.ac.ui.cs.pustakaone.bookshop.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+@NoArgsConstructor
+@Getter
+@Setter
+@Table(name = "Cart")
+@Entity
 public class Cart {
+    public Cart(Long userId) {
+        this.userId = userId;
+        this.totalPrice = 0;
+        this.paymentSuccess = false;
+        this.status = "belum";
+        this.bookCarts = new ArrayList<>();
+        this.address = "";
+    }
 
-    private String id;
-    @Setter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "lastId")
+    private Long lastId; //last idcart yang sudah di paid, remember id itu increment
+
+    @Column(name = "userId")
+    private Long userId;
+
+    @Column(name = "totalPrice")
     private int totalPrice;
-    private boolean isPaymentSuccess;
-    @Getter
+
+    @Column(name = "paymentSuccess")
+    private boolean paymentSuccess;
+
+    @Column(name = "status")
+    private String status;
+
+    @OneToMany(mappedBy = "cart")
+    @JsonManagedReference
     private List<BookCart> bookCarts;
 
-    public Cart(String id) {
-        this.id = id;
-        this.bookCarts = new ArrayList<>();
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "paidAt")
+    private Date paidAt;
+
+    public void setTotalPrice(int totalPrice) {
+        if (totalPrice < 0) {
+            throw new IllegalArgumentException("Total price tidak boleh negatif");
+        }
+        this.totalPrice = totalPrice;
+    }
+    public void addBookCart(BookCart bookcart) {
+        this.bookCarts.add(bookcart);
     }
 
-    public int getTotalHarga() {
-        return totalPrice;
+    public void removeBookCart(BookCart bookCart) {
+        this.bookCarts.remove(bookCart);
     }
-
-    public void setPaymentStatus(boolean status) {
-        this.isPaymentSuccess = status;
-    }
-
-    public boolean getPaymentStatus() {
-        return isPaymentSuccess;
-    }
-
-    public void addBookCart(BookCart bookCart) {
-        this.bookCarts.add(bookCart);
-    }
-
 }
