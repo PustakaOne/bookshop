@@ -1,11 +1,14 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import id.ac.ui.cs.pustakaone.bookshop.dto.CreateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -36,5 +39,10 @@ public class BookController {
         }
         return responseEntity;
 
+    }
+
+    @PostMapping(value = "/book")
+    public ResponseEntity createBook(@RequestBody CreateBookDTO createBookDto) {
+        return null;
     }
 }

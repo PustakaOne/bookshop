@@ -1,5 +1,7 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import id.ac.ui.cs.pustakaone.bookshop.dto.CreateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -30,6 +33,8 @@ public class BookControllerTest {
     private MockMvc mockMvc;
     private Book book;
 
+    CreateBookDTO createBookDto;
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
@@ -41,6 +46,7 @@ public class BookControllerTest {
                 .stock(20)
                 .price(200000)
                 .build();
+        createBookDto = new CreateBookDTO();
     }
 
     @Test
@@ -61,5 +67,29 @@ public class BookControllerTest {
 
         mockMvc.perform(get("/book/1"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testCreateBookSuccess() throws Exception {
+
+        when(bookService.createBook(any(CreateBookDTO.class))).thenReturn(book);
+        when(bookService.getBookDetail(book.getBookId())).thenReturn(book);
+
+        mockMvc.perform(post("/book")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(createBookDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.bookId").value(book.getBookId()))
+                .andExpect(jsonPath("$.title").value(book.getTitle()));
+    }
+
+    @Test
+    public void testCreateBookFailure() throws Exception {
+        when(bookService.createBook(any(CreateBookDTO.class))).thenThrow(new RuntimeException("Error creating book"));
+
+        mockMvc.perform(post("/book")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(createBookDto)))
+                .andExpect(status().isBadRequest());
     }
 }
