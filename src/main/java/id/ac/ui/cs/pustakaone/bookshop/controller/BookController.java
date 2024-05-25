@@ -1,11 +1,14 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import id.ac.ui.cs.pustakaone.bookshop.dto.CreateUpdateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -36,5 +39,27 @@ public class BookController {
         }
         return responseEntity;
 
+    }
+
+    @PostMapping(value = "/book")
+    public ResponseEntity createBook(@RequestBody CreateUpdateBookDTO createBookDto) {
+        try {
+            Book newBook = bookService.createBook(createBookDto);
+            return ResponseEntity.ok().body(bookService.getBookDetail(newBook.getBookId()));
+        } catch(Exception e) {
+            return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(value = "/book/{id}")
+    public ResponseEntity updateBookDetail(@PathVariable long id, @RequestBody CreateUpdateBookDTO updateBookDto) {
+        try {
+            bookService.getBookDetail(id);
+            return ResponseEntity.ok().body(bookService.updateBook(id, updateBookDto));
+        } catch(EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
+        }
     }
 }
