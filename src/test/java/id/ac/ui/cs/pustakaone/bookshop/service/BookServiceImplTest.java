@@ -1,5 +1,6 @@
 package id.ac.ui.cs.pustakaone.bookshop.service;
 
+import id.ac.ui.cs.pustakaone.bookshop.dto.CreateUpdateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.repository.BookRepository;
 import org.junit.jupiter.api.Test;
@@ -11,10 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceImplTest {
@@ -54,14 +52,27 @@ public class BookServiceImplTest {
     }
 
     @Test
-    void testUpdateBook() {
-        Book currentBook = new Book();
-        currentBook.setBookId(1L);
-        Book newBook = new Book();
-        newBook.setBookId(1L);
+    public void testUpdateBook() {
+        CreateUpdateBookDTO updateBookDto = new CreateUpdateBookDTO();
+        updateBookDto.setTitle("Updated Title");
+        updateBookDto.setAuthor("Updated Author");
 
-        bookService.updateBook(newBook);
-        verify(bookRepository, times(1)).save(any(Book.class));
+        Book existingBook;
+        existingBook = new Book();
+        existingBook.setBookId(1L);
+        existingBook.setTitle("Original Title");
+        existingBook.setAuthor("Original Author");
+
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(existingBook));
+        when(bookRepository.save(any(Book.class))).thenReturn(existingBook);
+
+        Book result = bookService.updateBook(1L, updateBookDto);
+
+        verify(bookRepository).findById(1L);
+        verify(bookRepository).save(existingBook);
+
+        assertEquals("Updated Title", result.getTitle());
+        assertEquals("Updated Author", result.getAuthor());
     }
 
     @Test
@@ -70,5 +81,43 @@ public class BookServiceImplTest {
         book.setBookId(1L);
         bookService.deleteBook(book.getBookId());
         verify(bookRepository, times(1)).deleteById(book.getBookId());
+    }
+
+    @Test
+    public void testCreateBook() {
+        CreateUpdateBookDTO createBookDto = new CreateUpdateBookDTO();
+        createBookDto.setTitle("Sample Title");
+        createBookDto.setAuthor("Sample Author");
+        createBookDto.setDescription("Sample Description");
+        createBookDto.setPrice(100);
+        createBookDto.setStock(10);
+        createBookDto.setReleaseDate(new Date());
+        createBookDto.setCoverUrl("http://example.com/cover.jpg");
+        createBookDto.setPublisher("Sample Publisher");
+        createBookDto.setIsbn("1234-5678-9101");
+        createBookDto.setPages(300);
+        createBookDto.setLang("EN");
+        createBookDto.setCategory("Sample Category");
+
+        Book savedBook = new Book();
+        savedBook.setTitle("Sample Title");
+        savedBook.setAuthor("Sample Author");
+        savedBook.setDescription("Sample Description");
+        savedBook.setPrice(100);
+        savedBook.setStock(10);
+        savedBook.setReleaseDate(new Date());
+        savedBook.setCoverUrl("http://example.com/cover.jpg");
+        savedBook.setPublisher("Sample Publisher");
+        savedBook.setIsbn("1234-5678-9101");
+        savedBook.setPages(300);
+        savedBook.setLang("EN");
+        savedBook.setCategory("Sample Category");
+
+        when(bookRepository.save(any(Book.class))).thenReturn(savedBook);
+
+        Book result = bookService.createBook(createBookDto);
+
+        verify(bookRepository).save(any(Book.class));
+        assertEquals(savedBook, result);
     }
 }

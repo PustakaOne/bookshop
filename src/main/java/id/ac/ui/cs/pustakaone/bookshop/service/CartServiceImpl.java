@@ -2,6 +2,7 @@ package id.ac.ui.cs.pustakaone.bookshop.service;
 
 import id.ac.ui.cs.pustakaone.bookshop.repository.BookCartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
@@ -28,6 +29,8 @@ public class CartServiceImpl implements CartService {
     BookCartRepository bookCartRepository;
     @Autowired
     BookRepository bookRepository;
+    @Autowired
+    PaymentService paymentService;
 
     @Override
     public Cart getCartByUserId(Long userId) {
@@ -43,9 +46,6 @@ public class CartServiceImpl implements CartService {
         return cartRepository.findByUserIdAndPaymentSuccessIsTrue(userId);
     }
 
-
-
-
     @Override
     public void checkoutCart(Long userId) {
 
@@ -53,7 +53,6 @@ public class CartServiceImpl implements CartService {
         cart.setStatus("processed");
         cartRepository.save(cart);
     }
-
     @Override
     public void cancelPay(Long userId) {
         Cart cart = this.getCartByUserId(userId);
@@ -64,30 +63,24 @@ public class CartServiceImpl implements CartService {
     @Override
     public void payCart(Long userId) {
         Cart cart = this.getCartByUserId(userId);
-
-        for (BookCart bookCart : cart.getBookCarts()) {
-            Book book = bookCart.getBook();
-            book.decrementStock(bookCart.getAmount());
-            bookRepository.save(book);
-        }
-
-        cart.setStatus("menunggu pengiriman");
-        cart.setPaymentSuccess(true);
-        cart.setPaidAt(new Date());
-        cartRepository.save(cart);
+        paymentService.processPayment(cart);
     }
 
 
 
     @Override
     public ResponseEntity<List<Cart>> getCarts(){
-        List<Cart> carts = cartRepository.findAll();
+        List<Cart> carts = cartRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         return ResponseEntity.ok(carts);
     }
 
     @Override
     public ResponseEntity<?> finishPayment(Long idCart) {
-        Cart cart = this.getCartByUserId(idCart);
+        Optional<Cart> optionalCart = cartRepository.findById(idCart);
+        if (!optionalCart.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        Cart cart = optionalCart.get();
         cart.setStatus("selesai");
         cart.setPaidAt(new Date());
         cartRepository.save(cart);

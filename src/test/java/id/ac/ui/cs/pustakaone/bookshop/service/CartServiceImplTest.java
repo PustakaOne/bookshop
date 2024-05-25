@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
@@ -37,6 +38,9 @@ public class CartServiceImplTest {
 
     @Mock
     private BookRepository bookRepository;
+
+    @Mock
+    private PaymentService paymentService;
 
     @BeforeEach
     public void setup() {
@@ -70,24 +74,12 @@ public class CartServiceImplTest {
     @Test
     void testPayCart() {
         Long userId = 1L;
-        Cart cart = new Cart(userId);
-        List<BookCart> bookCarts = new ArrayList<>();
-        Book book = mock(Book.class); // Mock the Book class
-        BookCart bookCart = new BookCart(book, cart, 1);
-        bookCarts.add(bookCart);
-        cart.setBookCarts(bookCarts);
-
+        Cart cart = cartService.getCartByUserId(userId);
         when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(cart);
-        doNothing().when(book).decrementStock(bookCart.getAmount());
-        when(book.getBookId()).thenReturn(1L);
 
         cartService.payCart(userId);
 
-        assertEquals("menunggu pengiriman", cart.getStatus());
-        assertTrue(cart.isPaymentSuccess());
-        assertNotNull(cart.getPaidAt());
-        verify(cartRepository).save(cart);
-        verify(bookRepository).save(book);
+        verify(paymentService).processPayment(cart);
     }
 
 
@@ -116,29 +108,46 @@ public class CartServiceImplTest {
     }
 
     @Test
-    void testFinishPayment() {
-        Long userId = 1L;
-        Cart cart = new Cart(userId);
-        when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(cart);
+    void testGetCarts() {
+        List<Cart> cartList = new ArrayList<>();
+        cartList.add(new Cart(1L));
+        cartList.add(new Cart(2L));
+        cartList.add(new Cart(3L));
 
-        cartService.finishPayment(userId);
+        when(cartRepository.findAll(Sort.by(Sort.Direction.ASC, "id"))).thenReturn(cartList);
 
+        ResponseEntity<List<Cart>> response = cartService.getCarts();
+
+        assertEquals(ResponseEntity.ok(cartList), response);
+    }
+
+    @Test
+    void testFinishPayment_CartExists() {
+        Long cartId = 1L;
+        Cart cart = new Cart();
+        cart.setId(cartId);
+        cart.setStatus("pending");
+
+        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
+
+        ResponseEntity<?> response = cartService.finishPayment(cartId);
+
+        assertEquals(ResponseEntity.ok(cart), response);
         assertEquals("selesai", cart.getStatus());
+        assertNotNull(cart.getPaidAt());
         verify(cartRepository).save(cart);
     }
 
     @Test
-    void testGetCarts() {
-        Cart existingCart = new Cart(1L);
-        Cart existingCart2 = new Cart(2L);
-        Cart existingCart3 = new Cart(3L);
-        List<Cart> list = new ArrayList<>();
-        list.add(existingCart);
-        list.add(existingCart2);
-        list.add(existingCart3);
-        when(cartRepository.findAll()).thenReturn(list);
-        ResponseEntity<List<Cart>> result = cartService.getCarts();
-        assertEquals(ResponseEntity.ok(list), result);
+    void testFinishPayment_CartDoesNotExist() {
+        Long cartId = 1L;
+
+        when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = cartService.finishPayment(cartId);
+
+        assertEquals(ResponseEntity.notFound().build(), response);
+        verify(cartRepository, never()).save(any(Cart.class));
     }
 
     @Test
