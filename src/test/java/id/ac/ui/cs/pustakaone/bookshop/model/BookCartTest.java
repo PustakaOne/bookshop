@@ -11,7 +11,6 @@ public class BookCartTest {
 
     @BeforeEach
     void setup() {
-        Long userId = 1L;
         this.book = new Book();
         this.book.setStock(10);
         this.cart = new Cart(1L);
