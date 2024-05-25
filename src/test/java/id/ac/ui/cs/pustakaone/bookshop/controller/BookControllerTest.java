@@ -44,22 +44,32 @@ public class BookControllerTest {
     }
 
     @Test
-    void testGetBookList() throws Exception {
+    void testGetAllBooks() throws Exception {
         List<Book> bookList = Collections.singletonList(book);
         when(bookService.getAllBooks()).thenReturn(bookList);
 
         mockMvc.perform(get("/books"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[{\"title\":\"Tes\",\"author\":\"tes\",\"publisher\":\"Gramed\",\"stock\":20,\"price\":200000}]"));
+                .andExpect(content().json("[{\"bookId\":1,\"title\":\"Tes\",\"author\":\"tes\",\"publisher\":\"Gramed\",\"stock\":20,\"price\":200000}]"));
+
+        // Test exception scenario
+        doThrow(new RuntimeException()).when(bookService).getAllBooks();
+        mockMvc.perform(get("/books"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     void testGetBookDetail() throws Exception {
-        bookService.addNewBook(book);
-        Book savedBook = bookService.getBookDetail(book.getBookId());
-        when(bookService.getBookDetail(book.getBookId())).thenReturn(savedBook);
+        when(bookService.getBookDetail(book.getBookId())).thenReturn(book);
 
         mockMvc.perform(get("/book/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("Tes"))
+                .andExpect(jsonPath("$.author").value("tes"));
+
+        // Test exception scenario
+        doThrow(new RuntimeException()).when(bookService).getBookDetail(book.getBookId());
+        mockMvc.perform(get("/book/1"))
+                .andExpect(status().isBadRequest());
     }
 }
