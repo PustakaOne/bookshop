@@ -1,10 +1,12 @@
 package id.ac.ui.cs.pustakaone.bookshop.service;
 
+import id.ac.ui.cs.pustakaone.bookshop.dto.CreateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -63,6 +65,12 @@ public class BookServiceImpl implements BookService {
                 .category(book.getCategory())
                 .build();
         return bookRepository.save(newBook);
+    }
+
+    @Override
+    public Book createBook(CreateBookDTO createBookDto) {
+
+        return null;
     }
 
     @Override

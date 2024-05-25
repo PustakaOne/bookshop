@@ -1,5 +1,6 @@
 package id.ac.ui.cs.pustakaone.bookshop.service;
 
+import id.ac.ui.cs.pustakaone.bookshop.dto.CreateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.repository.BookRepository;
 import org.junit.jupiter.api.Test;
@@ -70,5 +71,19 @@ public class BookServiceImplTest {
         book.setBookId(1L);
         bookService.deleteBook(book.getBookId());
         verify(bookRepository, times(1)).deleteById(book.getBookId());
+    }
+
+    @Test
+    public void testCreateBook() {
+        CreateBookDTO createBookDto = new CreateBookDTO();
+
+        Book savedBook = new Book();
+
+        when(bookRepository.save(any(Book.class))).thenReturn(savedBook);
+
+        Book result = bookService.createBook(createBookDto);
+
+        verify(bookRepository).save(any(Book.class));
+        assertEquals(savedBook, result);
     }
 }
