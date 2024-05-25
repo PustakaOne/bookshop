@@ -38,6 +38,22 @@ public class CartController {
         }
     }
 
+    @GetMapping("/history/{userId}")
+    public ResponseEntity<List<Cart>> getPaymentHistory(@PathVariable Long userId){
+        try{
+            List<Cart> paymentHistory = cartService.getUserPaymentHistory(userId);
+            if(paymentHistory.isEmpty()){
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(paymentHistory);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+
+    }
+
+
+
     @PostMapping("/checkout/{userId}")
     public ResponseEntity<Void> checkoutCart(@PathVariable Long userId) {
         try {

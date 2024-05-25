@@ -1,5 +1,6 @@
 package id.ac.ui.cs.pustakaone.bookshop.service;
 
+import id.ac.ui.cs.pustakaone.bookshop.dto.CreateUpdateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.repository.BookRepository;
 import org.junit.jupiter.api.Test;
@@ -54,14 +55,27 @@ public class BookServiceImplTest {
     }
 
     @Test
-    void testUpdateBook() {
-        Book currentBook = new Book();
-        currentBook.setBookId(1L);
-        Book newBook = new Book();
-        newBook.setBookId(1L);
+    public void testUpdateBook() {
+        CreateUpdateBookDTO updateBookDto = new CreateUpdateBookDTO();
+        updateBookDto.setTitle("Updated Title");
+        updateBookDto.setAuthor("Updated Author");
 
-        bookService.updateBook(newBook);
-        verify(bookRepository, times(1)).save(any(Book.class));
+        Book existingBook;
+        existingBook = new Book();
+        existingBook.setBookId(1L);
+        existingBook.setTitle("Original Title");
+        existingBook.setAuthor("Original Author");
+
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(existingBook));
+        when(bookRepository.save(any(Book.class))).thenReturn(existingBook);
+
+        Book result = bookService.updateBook(1L, updateBookDto);
+
+        verify(bookRepository).findById(1L);
+        verify(bookRepository).save(existingBook);
+
+        assertEquals("Updated Title", result.getTitle());
+        assertEquals("Updated Author", result.getAuthor());
     }
 
     @Test
@@ -70,5 +84,19 @@ public class BookServiceImplTest {
         book.setBookId(1L);
         bookService.deleteBook(book.getBookId());
         verify(bookRepository, times(1)).deleteById(book.getBookId());
+    }
+
+    @Test
+    public void testCreateBook() {
+        CreateUpdateBookDTO createBookDto = new CreateUpdateBookDTO();
+
+        Book savedBook = new Book();
+
+        when(bookRepository.save(any(Book.class))).thenReturn(savedBook);
+
+        Book result = bookService.createBook(createBookDto);
+
+        verify(bookRepository).save(any(Book.class));
+        assertEquals(savedBook, result);
     }
 }

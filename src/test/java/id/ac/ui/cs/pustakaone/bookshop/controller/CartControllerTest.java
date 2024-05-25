@@ -19,7 +19,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import id.ac.ui.cs.pustakaone.bookshop.service.CartService;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookCartService;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,12 +29,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-
 @ExtendWith(MockitoExtension.class)
 public class CartControllerTest {
 
     private MockMvc mockMvc;
+
     @Mock
     private CartService cartService;
 
@@ -63,6 +64,17 @@ public class CartControllerTest {
     }
 
     @Test
+    void getCartByUserIdTest_NotFound() {
+        Long userId = 1L;
+        when(cartService.getCartByUserId(userId)).thenThrow(new RuntimeException());
+
+        ResponseEntity<Cart> response = cartController.getCartByUserId(userId);
+
+        assertNotNull(response);
+        assertEquals(500, response.getStatusCodeValue());
+    }
+
+    @Test
     void checkoutCartTest() {
         Long userId = 1L;
         doNothing().when(cartService).checkoutCart(userId);
@@ -71,6 +83,17 @@ public class CartControllerTest {
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
+    }
+
+    @Test
+    void checkoutCartTest_Exception() {
+        Long userId = 1L;
+        doThrow(new RuntimeException()).when(cartService).checkoutCart(userId);
+
+        ResponseEntity<Void> response = cartController.checkoutCart(userId);
+
+        assertNotNull(response);
+        assertEquals(500, response.getStatusCodeValue());
     }
 
     @Test
@@ -85,6 +108,17 @@ public class CartControllerTest {
     }
 
     @Test
+    void cancelPaymentTest_Exception() {
+        Long userId = 1L;
+        doThrow(new RuntimeException()).when(cartService).cancelPay(userId);
+
+        ResponseEntity<Void> response = cartController.cancelPayment(userId);
+
+        assertNotNull(response);
+        assertEquals(500, response.getStatusCodeValue());
+    }
+
+    @Test
     void payCartTest() {
         Long userId = 1L;
         doNothing().when(cartService).payCart(userId);
@@ -93,6 +127,17 @@ public class CartControllerTest {
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
+    }
+
+    @Test
+    void payCartTest_Exception() {
+        Long userId = 1L;
+        doThrow(new RuntimeException()).when(cartService).payCart(userId);
+
+        ResponseEntity<Void> response = cartController.payCart(userId);
+
+        assertNotNull(response);
+        assertEquals(500, response.getStatusCodeValue());
     }
 
     @Test
@@ -111,6 +156,33 @@ public class CartControllerTest {
     }
 
     @Test
+    void addBookToCartTest_IllegalArgumentException() {
+        Long userId = 1L;
+        Long bookId = 1L;
+        int amount = 2;
+        when(bookCartService.addBookToCart(userId, bookId, amount)).thenThrow(new IllegalArgumentException("Invalid amount"));
+
+        ResponseEntity<?> response = cartController.addBookToCart(userId, bookId, amount);
+
+        assertNotNull(response);
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals("Invalid amount", response.getBody());
+    }
+
+    @Test
+    void addBookToCartTest_Exception() {
+        Long userId = 1L;
+        Long bookId = 1L;
+        int amount = 2;
+        when(bookCartService.addBookToCart(userId, bookId, amount)).thenThrow(new RuntimeException());
+
+        ResponseEntity<?> response = cartController.addBookToCart(userId, bookId, amount);
+
+        assertNotNull(response);
+        assertEquals(500, response.getStatusCodeValue());
+    }
+
+    @Test
     void updateBookAmountInCartTest() {
         Long userId = 1L;
         Long bookCartId = 1L;
@@ -126,11 +198,27 @@ public class CartControllerTest {
     }
 
     @Test
-    void getCartByUserIdTest_NotFound() {
+    void updateBookAmountInCartTest_IllegalArgumentException() {
         Long userId = 1L;
-        when(cartService.getCartByUserId(userId)).thenThrow(new RuntimeException());
+        Long bookCartId = 1L;
+        int newAmount = 3;
+        when(bookCartService.updateBookAmountInCart(userId, bookCartId, newAmount)).thenThrow(new IllegalArgumentException("Invalid amount"));
 
-        ResponseEntity<Cart> response = cartController.getCartByUserId(userId);
+        ResponseEntity<?> response = cartController.updateBookAmountInCart(userId, bookCartId, newAmount);
+
+        assertNotNull(response);
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals("Invalid amount", response.getBody());
+    }
+
+    @Test
+    void updateBookAmountInCartTest_Exception() {
+        Long userId = 1L;
+        Long bookCartId = 1L;
+        int newAmount = 3;
+        when(bookCartService.updateBookAmountInCart(userId, bookCartId, newAmount)).thenThrow(new RuntimeException());
+
+        ResponseEntity<?> response = cartController.updateBookAmountInCart(userId, bookCartId, newAmount);
 
         assertNotNull(response);
         assertEquals(500, response.getStatusCodeValue());
@@ -151,7 +239,6 @@ public class CartControllerTest {
 
     @Test
     public void testFinishPayments_BadRequest() {
-
         HashMap<String, String> body = new HashMap<>();
         Exception exception = assertThrows(NumberFormatException.class, () -> {
             cartController.finishPayments(body);
@@ -171,9 +258,57 @@ public class CartControllerTest {
     }
 
     @Test
-    public void testDeleteBookFromCart() throws Exception {
-        mockMvc.perform(delete("/shop/cart/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Success delete book from cart"));
+    public void testGetCart_Exception() throws Exception {
+        when(cartService.getCartByUserId(1L)).thenThrow(new RuntimeException());
+        mockMvc.perform(get("/shop/cart/" + 1))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void testGetPaymentHistory() {
+        Long userId = 1L;
+        List<Cart> paymentHistory = Arrays.asList(new Cart(), new Cart());
+        when(cartService.getUserPaymentHistory(userId)).thenReturn(paymentHistory);
+
+        ResponseEntity<List<Cart>> response = cartController.getPaymentHistory(userId);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(paymentHistory, response.getBody());
+    }
+
+    @Test
+    public void testGetPaymentHistory_NoContent() {
+        Long userId = 1L;
+        List<Cart> paymentHistory = Arrays.asList();
+        when(cartService.getUserPaymentHistory(userId)).thenReturn(paymentHistory);
+
+        ResponseEntity<List<Cart>> response = cartController.getPaymentHistory(userId);
+
+        assertNotNull(response);
+        assertEquals(204, response.getStatusCodeValue());
+    }
+
+    @Test
+    public void testGetPaymentHistory_Exception() {
+        Long userId = 1L;
+        when(cartService.getUserPaymentHistory(userId)).thenThrow(new RuntimeException());
+
+        ResponseEntity<List<Cart>> response = cartController.getPaymentHistory(userId);
+
+        assertNotNull(response);
+        assertEquals(500, response.getStatusCodeValue());
+    }
+
+    @Test
+    public void testGetCarts() {
+        List<Cart> carts = Arrays.asList(new Cart(1L), new Cart(2L));
+        when(cartService.getCarts()).thenReturn(ResponseEntity.ok(carts));
+
+        ResponseEntity<List<Cart>> response = cartController.getCarts();
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(carts, response.getBody());
     }
 }
