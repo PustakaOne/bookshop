@@ -12,10 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceImplTest {
@@ -89,8 +86,32 @@ public class BookServiceImplTest {
     @Test
     public void testCreateBook() {
         CreateUpdateBookDTO createBookDto = new CreateUpdateBookDTO();
+        createBookDto.setTitle("Sample Title");
+        createBookDto.setAuthor("Sample Author");
+        createBookDto.setDescription("Sample Description");
+        createBookDto.setPrice(100);
+        createBookDto.setStock(10);
+        createBookDto.setReleaseDate(new Date());
+        createBookDto.setCoverUrl("http://example.com/cover.jpg");
+        createBookDto.setPublisher("Sample Publisher");
+        createBookDto.setIsbn("1234-5678-9101");
+        createBookDto.setPages(300);
+        createBookDto.setLang("EN");
+        createBookDto.setCategory("Sample Category");
 
         Book savedBook = new Book();
+        savedBook.setTitle("Sample Title");
+        savedBook.setAuthor("Sample Author");
+        savedBook.setDescription("Sample Description");
+        savedBook.setPrice(100);
+        savedBook.setStock(10);
+        savedBook.setReleaseDate(new Date());
+        savedBook.setCoverUrl("http://example.com/cover.jpg");
+        savedBook.setPublisher("Sample Publisher");
+        savedBook.setIsbn("1234-5678-9101");
+        savedBook.setPages(300);
+        savedBook.setLang("EN");
+        savedBook.setCategory("Sample Category");
 
         when(bookRepository.save(any(Book.class))).thenReturn(savedBook);
 
