@@ -113,8 +113,7 @@ public class CartServiceImpl implements CartService {
             throw new EntityNotFoundException("Bookcart not found! 3");
         }
 
-//        bookCarts.remove(bookCart);
-        cart.getBookCarts().remove(bookCart); //edbert edit
+        cart.getBookCarts().remove(bookCart);
 
         bookCartRepository.delete(bookCart.get());
 
