@@ -9,11 +9,11 @@ import java.util.Date;
 
 public class CartTest {
     Long userId;
+
     @BeforeEach
     void setup() {
         this.userId = 1L;
     }
-
 
     @Test
     public void testCreateCart() {
@@ -27,7 +27,7 @@ public class CartTest {
         assertEquals(userId, cart.getUserId());
         assertEquals(0, cart.getTotalPrice());
         assertFalse(cart.isPaymentSuccess());
-        assertEquals("belum",cart.getStatus());
+        assertEquals("belum", cart.getStatus());
         assertEquals("", cart.getAddress());
     }
 
@@ -54,7 +54,7 @@ public class CartTest {
     }
 
     @Test
-    public void testSetAddresss() {
+    public void testSetAddress() {
         Cart cart = new Cart(userId);
         String address = "Jalan Depok";
         cart.setAddress(address);
@@ -67,5 +67,49 @@ public class CartTest {
         Date paidAt = new Date();
         cart.setPaidAt(paidAt);
         assertEquals(paidAt, cart.getPaidAt());
+    }
+
+    @Test
+    public void testAddBookCart() {
+        Cart cart = new Cart(userId);
+        BookCart bookCart = new BookCart();
+        cart.addBookCart(bookCart);
+        assertTrue(cart.getBookCarts().contains(bookCart));
+    }
+
+    @Test
+    public void testRemoveBookCart() {
+        Cart cart = new Cart(userId);
+        BookCart bookCart = new BookCart();
+        cart.addBookCart(bookCart);
+        cart.removeBookCart(bookCart);
+        assertFalse(cart.getBookCarts().contains(bookCart));
+    }
+
+    @Test
+    public void testSetId() {
+        Cart cart = new Cart(userId);
+        cart.setId(100L);
+        assertEquals(100L, cart.getId());
+    }
+
+    @Test
+    public void testSetLastId() {
+        Cart cart = new Cart(userId);
+        cart.setLastId(200L);
+        assertEquals(200L, cart.getLastId());
+    }
+
+    @Test
+    public void testSetUserId() {
+        Cart cart = new Cart(userId);
+        cart.setUserId(300L);
+        assertEquals(300L, cart.getUserId());
+    }
+
+    @Test
+    public void testConstructor() {
+        Cart cart = new Cart();
+        assertNotNull(cart);
     }
 }

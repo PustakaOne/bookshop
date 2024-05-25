@@ -1,9 +1,11 @@
 package id.ac.ui.cs.pustakaone.bookshop.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +34,11 @@ public class BookCartServiceImplTest {
     @InjectMocks
     private BookCartServiceImpl bookCartService;
 
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     void testAddBookToCart() {
         Long userId = 1L;
@@ -41,6 +48,7 @@ public class BookCartServiceImplTest {
         Book book = new Book();
         book.setBookId(bookId);
         book.setStock(5);
+        book.setPrice(100);
 
         when(cartService.getCartByUserId(userId)).thenReturn(cart);
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
@@ -50,6 +58,7 @@ public class BookCartServiceImplTest {
         assertNotNull(bookCart);
         assertEquals(bookId, bookCart.getBook().getBookId());
         assertEquals(amount, bookCart.getAmount());
+        assertEquals(100, cart.getTotalPrice());
         verify(bookCartRepository).save(bookCart);
         verify(cartRepository).save(cart);
     }
@@ -75,6 +84,23 @@ public class BookCartServiceImplTest {
     }
 
     @Test
+    void testAddBookToCart_BookNotFoundException() {
+        Long userId = 1L;
+        Long bookId = 1L;
+        int amount = 1;
+        Cart cart = new Cart(userId);
+
+        when(cartService.getCartByUserId(userId)).thenReturn(cart);
+        when(bookRepository.findById(bookId)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            bookCartService.addBookToCart(userId, bookId, amount);
+        });
+
+        assertEquals("Book not found", exception.getMessage());
+    }
+
+    @Test
     void testUpdateBookAmountInCart() {
         Long userId = 1L;
         Long bookCartId = 1L;
@@ -82,6 +108,7 @@ public class BookCartServiceImplTest {
         Cart cart = new Cart(userId);
         Book book = new Book();
         book.setStock(3);
+        book.setPrice(100);
         BookCart bookCart = new BookCart(book, cart, 1);
 
         when(cartService.getCartByUserId(userId)).thenReturn(cart);
@@ -90,6 +117,7 @@ public class BookCartServiceImplTest {
         bookCartService.updateBookAmountInCart(userId, bookCartId, newAmount);
 
         assertEquals(newAmount, bookCart.getAmount());
+        assertEquals(200, cart.getTotalPrice());
         verify(cartRepository).save(cart);
         verify(bookCartRepository).save(bookCart);
     }
@@ -112,5 +140,23 @@ public class BookCartServiceImplTest {
         });
 
         assertEquals("Invalid amount", exception.getMessage());
+        verify(cartRepository).save(cart);
+    }
+
+    @Test
+    void testUpdateBookAmountInCart_BookCartNotFoundException() {
+        Long userId = 1L;
+        Long bookCartId = 1L;
+        int newAmount = 2;
+        Cart cart = new Cart(userId);
+
+        when(cartService.getCartByUserId(userId)).thenReturn(cart);
+        when(bookCartRepository.findById(bookCartId)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            bookCartService.updateBookAmountInCart(userId, bookCartId, newAmount);
+        });
+
+        assertEquals("BookCart not found", exception.getMessage());
     }
 }
