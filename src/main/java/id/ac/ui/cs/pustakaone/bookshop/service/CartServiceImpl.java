@@ -2,6 +2,7 @@ package id.ac.ui.cs.pustakaone.bookshop.service;
 
 import id.ac.ui.cs.pustakaone.bookshop.repository.BookCartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
@@ -69,13 +70,17 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public ResponseEntity<List<Cart>> getCarts(){
-        List<Cart> carts = cartRepository.findAll();
+        List<Cart> carts = cartRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
         return ResponseEntity.ok(carts);
     }
 
     @Override
     public ResponseEntity<?> finishPayment(Long idCart) {
-        Cart cart = this.getCartByUserId(idCart);
+        Optional<Cart> optionalCart = cartRepository.findById(idCart);
+        if (!optionalCart.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        Cart cart = optionalCart.get();
         cart.setStatus("selesai");
         cart.setPaidAt(new Date());
         cartRepository.save(cart);
