@@ -11,17 +11,17 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateBookDTO {
+public class CreateUpdateBookDTO {
     private String title;
     private String author;
     private String description;
-    private int price;
-    private int stock;
+    private Integer price;
+    private Integer stock;
     private Date releaseDate;
     private String coverUrl;
     private String publisher;
     private String isbn;
-    private int pages;
+    private Integer pages;
     private String lang;
     private String category;
 }

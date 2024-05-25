@@ -1,7 +1,7 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import id.ac.ui.cs.pustakaone.bookshop.dto.CreateBookDTO;
+import id.ac.ui.cs.pustakaone.bookshop.dto.CreateUpdateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +33,7 @@ public class BookControllerTest {
     private MockMvc mockMvc;
     private Book book;
 
-    CreateBookDTO createBookDto;
+    CreateUpdateBookDTO createBookDto;
 
     @BeforeEach
     void setUp() {
@@ -46,7 +46,7 @@ public class BookControllerTest {
                 .stock(20)
                 .price(200000)
                 .build();
-        createBookDto = new CreateBookDTO();
+        createBookDto = new CreateUpdateBookDTO();
     }
 
     @Test
@@ -72,7 +72,7 @@ public class BookControllerTest {
     @Test
     public void testCreateBookSuccess() throws Exception {
 
-        when(bookService.createBook(any(CreateBookDTO.class))).thenReturn(book);
+        when(bookService.createBook(any(CreateUpdateBookDTO.class))).thenReturn(book);
         when(bookService.getBookDetail(book.getBookId())).thenReturn(book);
 
         mockMvc.perform(post("/book")
@@ -85,7 +85,7 @@ public class BookControllerTest {
 
     @Test
     public void testCreateBookFailure() throws Exception {
-        when(bookService.createBook(any(CreateBookDTO.class))).thenThrow(new RuntimeException("Error creating book"));
+        when(bookService.createBook(any(CreateUpdateBookDTO.class))).thenThrow(new RuntimeException("Error creating book"));
 
         mockMvc.perform(post("/book")
                         .contentType(MediaType.APPLICATION_JSON)

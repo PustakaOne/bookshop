@@ -1,12 +1,11 @@
 package id.ac.ui.cs.pustakaone.bookshop.service;
 
-import id.ac.ui.cs.pustakaone.bookshop.dto.CreateBookDTO;
+import id.ac.ui.cs.pustakaone.bookshop.dto.CreateUpdateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -48,27 +47,52 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Book updateBook(Book book) {
-        Book newBook = Book.builder()
-                .bookId(book.getBookId())
-                .title(book.getTitle())
-                .author(book.getAuthor())
-                .description(book.getDescription())
-                .price(book.getPrice())
-                .stock(book.getStock())
-                .releaseDate(book.getReleaseDate())
-                .coverUrl(book.getCoverUrl())
-                .publisher(book.getPublisher())
-                .isbn(book.getIsbn())
-                .pages(book.getPages())
-                .lang(book.getLang())
-                .category(book.getCategory())
-                .build();
-        return bookRepository.save(newBook);
+    public Book updateBook(Long bookId, CreateUpdateBookDTO updateBookDto) {
+        Book existingBook = bookRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        if (updateBookDto.getTitle() != null) {
+            existingBook.setTitle(updateBookDto.getTitle());
+        }
+        if (updateBookDto.getAuthor() != null) {
+            existingBook.setAuthor(updateBookDto.getAuthor());
+        }
+        if (updateBookDto.getDescription() != null) {
+            existingBook.setDescription(updateBookDto.getDescription());
+        }
+        if (updateBookDto.getPrice() != null) {
+            existingBook.setPrice(updateBookDto.getPrice());
+        }
+        if (updateBookDto.getStock() != null) {
+            existingBook.setStock(updateBookDto.getStock());
+        }
+        if (updateBookDto.getReleaseDate() != null) {
+            existingBook.setReleaseDate(updateBookDto.getReleaseDate());
+        }
+        if (updateBookDto.getCoverUrl() != null) {
+            existingBook.setCoverUrl(updateBookDto.getCoverUrl());
+        }
+        if (updateBookDto.getPublisher() != null) {
+            existingBook.setPublisher(updateBookDto.getPublisher());
+        }
+        if (updateBookDto.getIsbn() != null) {
+            existingBook.setIsbn(updateBookDto.getIsbn());
+        }
+        if (updateBookDto.getPages() != null) {
+            existingBook.setPages(updateBookDto.getPages());
+        }
+        if (updateBookDto.getLang() != null) {
+            existingBook.setLang(updateBookDto.getLang());
+        }
+        if (updateBookDto.getCategory() != null) {
+            existingBook.setCategory(updateBookDto.getCategory());
+        }
+
+        return bookRepository.save(existingBook);
     }
 
     @Override
-    public Book createBook(CreateBookDTO createBookDto) {
+    public Book createBook(CreateUpdateBookDTO createBookDto) {
         Book newBook = Book.builder()
                 .title(createBookDto.getTitle())
                 .author(createBookDto.getAuthor())
