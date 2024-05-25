@@ -1,9 +1,12 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import id.ac.ui.cs.pustakaone.bookshop.dto.BookWithReviewsDTO;
 import id.ac.ui.cs.pustakaone.bookshop.dto.CreateUpdateBookDTO;
 import id.ac.ui.cs.pustakaone.bookshop.model.Book;
+import id.ac.ui.cs.pustakaone.bookshop.model.Review;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookService;
+import id.ac.ui.cs.pustakaone.bookshop.service.ReviewServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,14 +15,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.util.AssertionErrors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,6 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BookControllerTest {
     @Mock
     private BookService bookService;
+
+    @Mock
+    private ReviewServiceImpl reviewService;
 
     @InjectMocks
     private BookController bookController;
@@ -77,19 +89,50 @@ public class BookControllerTest {
     }
 
     @Test
-    void testGetBookDetail() throws Exception {
-        when(bookService.getBookDetail(book.getBookId())).thenReturn(book);
+    public void testGetBookDetail_Success() throws Exception {
+        // Arrange
+        Book mockBook = new Book();
+        mockBook.setBookId(1L);
+        mockBook.setTitle("Test Book");
 
-        mockMvc.perform(get("/book/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Tes"))
-                .andExpect(jsonPath("$.author").value("tes"));
+        Review mockReview1 = new Review();
+        mockReview1.setReviewId(1L);
+        mockReview1.setBookId(1L);
+        mockReview1.setContent("Great book!");
 
-        // Test exception scenario
-        doThrow(new RuntimeException()).when(bookService).getBookDetail(book.getBookId());
-        mockMvc.perform(get("/book/1"))
-                .andExpect(status().isBadRequest());
+        Review mockReview2 = new Review();
+        mockReview2.setReviewId(2L);
+        mockReview2.setBookId(1L);
+        mockReview2.setContent("Loved it!");
+
+        List<Review> mockReviews = Arrays.asList(mockReview1, mockReview2);
+        CompletableFuture<List<Review>> mockReviewFuture = CompletableFuture.completedFuture(mockReviews);
+
+        when(bookService.getBookDetail(anyLong())).thenReturn(mockBook);
+        when(reviewService.getReviews(anyLong())).thenReturn(mockReviewFuture);
+
+        // Act
+        ResponseEntity<?> responseEntity = bookController.getBookDetail(1L);
+
+        // Assert
+        assertEquals(null, HttpStatus.OK, responseEntity.getStatusCode());
+        BookWithReviewsDTO responseBody = (BookWithReviewsDTO) responseEntity.getBody();
+        assertEquals(null, mockBook, responseBody.getBook());
+        assertEquals(null, mockReviews, responseBody.getReviews());
     }
+
+    @Test
+    public void testGetBookDetail_Failure() throws Exception {
+        // Arrange
+        when(bookService.getBookDetail(anyLong())).thenThrow(new RuntimeException("Book not found"));
+
+        // Act
+        ResponseEntity<?> responseEntity = bookController.getBookDetail(1L);
+
+        // Assert
+        assertEquals(null, HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
 
     @Test
     public void testCreateBookSuccess() throws Exception {

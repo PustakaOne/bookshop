@@ -32,7 +32,7 @@ public class BookController {
         return responseEntity;
     }
 
-    @RequestMapping(value = "/book/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/books/{id}", method = RequestMethod.GET)
     public ResponseEntity getBookDetail(@PathVariable long id) {
         ResponseEntity responseEntity = null;
         try {
@@ -45,7 +45,6 @@ public class BookController {
             responseEntity = ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
-
     }
 
     @PostMapping(value = "/book")
