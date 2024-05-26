@@ -1,5 +1,6 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -310,5 +312,18 @@ public class CartControllerTest {
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(carts, response.getBody());
+    }
+
+    @Test
+    public void testDeleteBookCart() throws Exception {
+        // Arrange
+        Book book = new Book(); // Create a mock Book object
+        when(cartService.deleteBookFromCart(anyLong(), anyLong())).thenReturn(book);
+
+        // Act
+        ResponseEntity<Book> response = cartController.deleteBookCart("1", "1");
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
