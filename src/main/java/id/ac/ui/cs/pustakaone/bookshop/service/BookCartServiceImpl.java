@@ -44,11 +44,9 @@ public class BookCartServiceImpl implements BookCartService {
     @Override
     public BookCart updateBookAmountInCart(Long userId,Long bookCartId, int newAmount) {
         Cart cart = cartService.getCartByUserId(userId);
-//        cart.getBookCarts()
         BookCart bookCart = bookCartRepository.findById(bookCartId).orElseThrow(() -> new RuntimeException("BookCart not found"));
         cart.getBookCarts().remove(bookCart);
         if (newAmount < 1 || newAmount > bookCart.getBook().getStock()) {
-//            newAmount = bookCart.getAmount();
             cart.getBookCarts().add(bookCart);
             cartRepository.save(cart);
             throw new IllegalArgumentException("Invalid amount");
