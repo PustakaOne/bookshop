@@ -23,7 +23,6 @@ public class ReviewController {
             reviewService.createReview(review);
             responseEntity = ResponseEntity.ok().build();
         } catch (Exception e) {
-            System.out.println("Error in add book!");
             responseEntity = ResponseEntity.badRequest().body(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -39,7 +38,6 @@ public class ReviewController {
             List<Review> result = reviewService.getAllBookReview(bookId);
             responseEntity = ResponseEntity.ok().body(result);
         } catch (Exception e) {
-            System.out.println("Error in get review!");
             responseEntity = ResponseEntity.badRequest().body(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -54,7 +52,6 @@ public class ReviewController {
             reviewService.updateReview(review);
             responseEntity = ResponseEntity.ok().build();
         } catch (Exception e) {
-            System.out.println("Error in add book!");
             responseEntity = ResponseEntity.badRequest().body(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -69,7 +66,6 @@ public class ReviewController {
             reviewService.deleteReview(reviewId);
             responseEntity = ResponseEntity.ok().build();
         } catch (Exception e) {
-            System.out.println("Error in delete book!");
             responseEntity = ResponseEntity.badRequest().body(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

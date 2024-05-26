@@ -3,12 +3,8 @@ package id.ac.ui.cs.pustakaone.bookshop.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
-import id.ac.ui.cs.pustakaone.bookshop.service.CartServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
 import id.ac.ui.cs.pustakaone.bookshop.service.CartService;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookCartService;
 
@@ -102,7 +98,6 @@ public class CartController {
             Cart cart = cartService.getCartByUserId(Long.parseLong(userId));
             return ResponseEntity.ok(cart);
         } catch (Exception err) {
-            System.out.println(err);
             return ResponseEntity.internalServerError().build();
         }
     }
