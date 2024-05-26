@@ -1,5 +1,6 @@
 package id.ac.ui.cs.pustakaone.bookshop.controller;
 
+import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import id.ac.ui.cs.pustakaone.bookshop.model.Cart;
@@ -101,6 +102,11 @@ public class CartController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    @DeleteMapping("/{userId}/{bookCartId}")
+    public ResponseEntity<Book> deleteBookCart(@PathVariable String userId, @PathVariable String bookCartId) {
+        return null
+    }
+
     @PutMapping("/updateBook/{userId}/{bookCartId}/{newAmount}")
     public ResponseEntity<?> updateBookAmountInCart(@PathVariable Long userId, @PathVariable Long bookCartId, @PathVariable int newAmount) {
         try {
