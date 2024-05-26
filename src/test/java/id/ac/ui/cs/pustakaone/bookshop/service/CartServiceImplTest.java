@@ -219,7 +219,6 @@ public class CartServiceImplTest {
         Long bookCartId = 1L;
         BookCart bookCart = new BookCart();
         Cart cart = new Cart(userId);
-        List<BookCart> bookCarts = new ArrayList<>();
 
         when(bookCartRepository.findById(bookCartId)).thenReturn(Optional.of(bookCart));
         when(cartRepository.findByUserIdAndPaymentSuccessIsFalse(userId)).thenReturn(cart);
