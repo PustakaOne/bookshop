@@ -33,7 +33,7 @@ public class BookController {
     }
 
     @RequestMapping(value = "/books/{id}", method = RequestMethod.GET)
-    public ResponseEntity getBookDetail(@PathVariable long id) {
+    public ResponseEntity getBookDetail(@PathVariable long id) throws InterruptedException {
         ResponseEntity responseEntity = null;
         try {
             Book book = bookService.getBookDetail(id);
@@ -43,7 +43,7 @@ public class BookController {
             responseEntity = ResponseEntity.ok().body(bookWithReviewsDTO);
         } catch (InterruptedException e) {
             // Rethrow the InterruptedException
-            throw new RuntimeException("Thread was interrupted", e);
+            throw new InterruptedException("Thread was interrupted");
         } catch (Exception e) {
             responseEntity = ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
         }
