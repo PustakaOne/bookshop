@@ -71,4 +71,14 @@ public class BookController {
             return ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @DeleteMapping(value = "/book/{id}/delete")
+    public ResponseEntity<?> deleteBook(@PathVariable long id) {
+        try {
+            bookService.deleteBook(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error deleting book with ID: " + id);
+        }
+    }
 }
