@@ -104,7 +104,12 @@ public class CartController {
     }
     @DeleteMapping("/{userId}/{bookCartId}")
     public ResponseEntity<Book> deleteBookCart(@PathVariable String userId, @PathVariable String bookCartId) {
-        return null
+        try {
+            Book deletedBook = cartService.deleteBookFromCart(Long.parseLong(userId), Long.parseLong(bookCartId));
+            return ResponseEntity.ok(deletedBook);
+        } catch (Exception err) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PutMapping("/updateBook/{userId}/{bookCartId}/{newAmount}")
