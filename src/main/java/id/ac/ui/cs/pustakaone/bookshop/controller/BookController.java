@@ -41,6 +41,9 @@ public class BookController {
             List<Review> reviews = reviewFuture.get();
             BookWithReviewsDTO bookWithReviewsDTO = new BookWithReviewsDTO(book, reviews);
             responseEntity = ResponseEntity.ok().body(bookWithReviewsDTO);
+        } catch (InterruptedException e) {
+            // Rethrow the InterruptedException
+            throw new RuntimeException("Thread was interrupted", e);
         } catch (Exception e) {
             responseEntity = ResponseEntity.badRequest().body(HttpStatus.BAD_REQUEST);
         }
