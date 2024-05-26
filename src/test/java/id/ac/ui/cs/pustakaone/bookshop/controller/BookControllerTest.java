@@ -191,4 +191,26 @@ public class BookControllerTest {
                         .content(new ObjectMapper().writeValueAsString(updateBookDto)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void deleteBook_Success() throws Exception {
+        long bookId = 1L;
+
+        doNothing().when(bookService).deleteBook(bookId);
+
+        mockMvc.perform(delete("/book/{id}/delete", bookId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void deleteBook_Failure() throws Exception {
+        long bookId = 1L;
+
+        doThrow(new RuntimeException("Book not found")).when(bookService).deleteBook(bookId);
+
+        mockMvc.perform(delete("/book/{id}/delete", bookId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
 }
