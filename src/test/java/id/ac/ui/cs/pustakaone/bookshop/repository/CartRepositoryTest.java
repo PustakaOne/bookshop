@@ -21,8 +21,6 @@ public class CartRepositoryTest {
     @Autowired
     private CartRepository cartRepository;
 
-//    @Autowired
-//    private BookRepository bookRepository;
 
     @Autowired
     private BookCartRepository bookCartRepository;
@@ -39,7 +37,6 @@ public class CartRepositoryTest {
 
         book = new Book();
         book.setStock(10);
-//        bookRepository.save(book);
 
         bookCart = new BookCart(book, cart, 2);
     }

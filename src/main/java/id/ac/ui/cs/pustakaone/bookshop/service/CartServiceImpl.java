@@ -16,8 +16,6 @@ import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.model.BookCart;
 import jakarta.persistence.EntityNotFoundException;
 
-import java.util.List;
-import java.util.Optional;
 
 
 @Service

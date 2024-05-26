@@ -44,7 +44,6 @@ public class BookServiceImplTest {
         List<Book> books = new ArrayList<>();
         books.add(new Book());
         books.add(new Book());
-        Iterator<Book> iterator = books.iterator();
         when(bookRepository.findAll()).thenReturn(books);
 
         List<Book> result = bookService.getAllBooks();
