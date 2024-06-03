@@ -6,7 +6,7 @@ import id.ac.ui.cs.pustakaone.bookshop.model.Book;
 import id.ac.ui.cs.pustakaone.bookshop.model.Review;
 import id.ac.ui.cs.pustakaone.bookshop.service.BookService;
 import jakarta.persistence.EntityNotFoundException;
-import id.ac.ui.cs.pustakaone.bookshop.service.ReviewServiceImpl;
+import id.ac.ui.cs.pustakaone.bookshop.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,9 @@ import java.util.concurrent.Future;
 public class BookController {
     @Autowired
     private BookService bookService;
-    private ReviewServiceImpl reviewService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @RequestMapping(value = "/books", method = RequestMethod.GET)
     public ResponseEntity getAllBooks() {

@@ -62,6 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Async
+    @Override
     public CompletableFuture<List<Review>> getReviews(long bookId) {
         List<Review> reviews = reviewRepository.findByBookId(bookId);
         return CompletableFuture.completedFuture(reviews);
